@@ -162,7 +162,7 @@ Game.prototype = {
     if (!this.dragOffset) {
       // Before can be dragged
       var distance = Math.pow(left - this.capturedPos.left, 2) + Math.pow(top - this.capturedPos.top, 2);
-      if (distance >= Config.Selected.dragSensitive * Math.pow(this.unitSize, 2)) {
+      if (distance >= Math.pow(Config.Selected.dragSensitive * this.unitSize, 2)) {
         this.dragOffset = {
           left: left - this.capturedPos.left,
           top: top - this.capturedPos.top

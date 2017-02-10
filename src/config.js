@@ -17,6 +17,6 @@ var Config = {
 
   Selected: {
     stroke: "RGBA(255, 0, 0, 0.5)",
-    dragSensitive: 3
+    dragSensitive: 4
   }
 }
