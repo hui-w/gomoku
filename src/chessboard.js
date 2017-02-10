@@ -1,9 +1,9 @@
 /** 
  * @author Wang, Hui (huiwang@qlike.com) 
- * @repo https://github.com/hui-w/maze
+ * @repo https://github.com/hui-w/gomoku
  * @licence MIT 
  */
-function Game() {
+function Chessboard() {
   this.left = 0;
   this.top = 0;
   this.size = 0;
@@ -23,12 +23,20 @@ function Game() {
   this.selectedCell = null; // {x, y}
 
   // The event to redraw
-  this.onChange = null;
+  this.onUpdateUI = null;
 }
 
-Game.prototype = {
+Chessboard.prototype = {
   init: function() {
+    this.isBlack = true;
     this.stones = [];
+    this.triggerUpdateUI();
+  },
+
+  back: function() {
+    this.isBlack = !this.isBlack;
+    this.stones.pop();
+    this.triggerUpdateUI();
   },
 
   setPaintingArea: function(left, top, size) {
@@ -40,13 +48,13 @@ Game.prototype = {
     this.bottom = top + this.unitSize * Config.Board.size - 1;
   },
 
-  draw: function(context) {
-    this.drawChessboard(context);
-    this.drawCells(context);
-    this.drawHighlight(context);
+  render: function(context) {
+    this.renderChessboard(context);
+    this.renderCells(context);
+    this.renderHighlight(context);
   },
 
-  drawChessboard: function(context) {
+  renderChessboard: function(context) {
     // The rectangle of the visiable chess board
     var rect = {
       left: this.left + this.halfSize,
@@ -81,7 +89,7 @@ Game.prototype = {
     context.restore();
   },
 
-  drawCells: function(context) {
+  renderCells: function(context) {
     for (var i = 0; i < this.stones.length; i++) {
       var x = this.stones[i].x;
       var y = this.stones[i].y;
@@ -108,7 +116,7 @@ Game.prototype = {
     }
   },
 
-  drawHighlight: function(context) {
+  renderHighlight: function(context) {
     if (this.selectedCell) {
       var left = this.left + this.selectedCell.x * this.unitSize;
       var top = this.top + this.selectedCell.y * this.unitSize;
@@ -153,7 +161,7 @@ Game.prototype = {
     this.setSelectedCell(left, top);
   },
 
-  onMove: function(left, top) {
+  onDrag: function(left, top) {
     if (!this.capturedPos) {
       // Mouse not down
       return;
@@ -174,6 +182,24 @@ Game.prototype = {
     }
   },
 
+  onRelease: function(left, top) {
+    this.capturedPos = null;
+    this.dragOffset = null;
+
+    // Set the selected cell
+    if (this.selectedCell && !this.hasStone(this.selectedCell.x, this.selectedCell.y)) {
+      this.stones.push({
+        x: this.selectedCell.x,
+        y: this.selectedCell.y,
+        isBlack: this.isBlack
+      });
+
+      this.isBlack = !this.isBlack;
+
+      this.triggerUpdateUI();
+    }
+  },
+
   setSelectedCell: function(left, top) {
     var oldX = this.selectedCell ? this.selectedCell.x : null;
     var oldY = this.selectedCell ? this.selectedCell.y : null;
@@ -189,25 +215,7 @@ Game.prototype = {
     var newY = this.selectedCell ? this.selectedCell.y : null;
 
     if (newX != oldX || newY != oldY) {
-      this.triggerChange();
-    }
-  },
-
-  onRelease: function(left, top) {
-    this.capturedPos = null;
-    this.dragOffset = null;
-
-    // Set the selected cell
-    if (this.selectedCell && !this.hasStone(this.selectedCell.x, this.selectedCell.y)) {
-      this.stones.push({
-        x: this.selectedCell.x,
-        y: this.selectedCell.y,
-        isBlack: this.isBlack
-      });
-
-      this.isBlack = !this.isBlack;
-
-      this.triggerChange();
+      this.triggerUpdateUI();
     }
   },
 
@@ -228,9 +236,9 @@ Game.prototype = {
     return false;
   },
 
-  triggerChange: function() {
-    if (typeof this.onChange == "function") {
-      this.onChange();
+  triggerUpdateUI: function() {
+    if (typeof this.onUpdateUI == 'function') {
+      this.onUpdateUI();
     }
   }
 }

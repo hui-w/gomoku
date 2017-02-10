@@ -1,6 +1,6 @@
 /** 
 * @author Wang, Hui (huiwang@qlike.com) 
-* @repo https://github.com/hui-w/maze
+* @repo https://github.com/hui-w/gomoku
 * @licence MIT 
 */
 var Config = {
@@ -18,5 +18,10 @@ var Config = {
   Selected: {
     stroke: "RGBA(255, 0, 0, 0.5)",
     dragSensitive: 4
+  },
+
+  Button: {
+    size: 50,
+    margin: 20
   }
 }

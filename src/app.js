@@ -1,22 +1,72 @@
 /** 
  * @author Wang, Hui (huiwang@qlike.com) 
- * @repo https://github.com/hui-w/maze
+ * @repo https://github.com/hui-w/gomoku
  * @licence MIT 
  */
 function App() {
   var that = this;
-  this.game = new Game();
-  this.game.onChange = function() {
-    // Sth changed and redraw requested
-    that.redraw();
-  };
 
+  // Properties
   this.width = 0;
   this.height = 0;
   this.cellSize = 0;
 
   this.canvas = null;
   this.context = null;
+
+  // Child components
+  this.chessboard = new Chessboard();
+  var btnSize = Config.Button.size;
+  this.btnNew = new Button(0, 0, btnSize, btnSize);
+  this.btnNew.renderExtra = function(context, left, top) {
+    context.save();
+    context.beginPath();
+
+    // Horizontal line
+    context.moveTo(left + btnSize / 4, top + btnSize / 2);
+    context.lineTo(left + btnSize - btnSize / 4, top + btnSize / 2);
+    // Vertical line
+    context.moveTo(left + btnSize / 2, top + btnSize / 4);
+    context.lineTo(left + btnSize / 2, top + btnSize - btnSize / 4);
+
+    context.strokeStyle = "#000";
+    context.stroke();
+    context.restore();
+  };
+  this.btnNew.onClick = function() {
+    that.chessboard.init();
+  };
+
+  this.btnBack = new Button(0, 0, btnSize, btnSize);
+  this.btnBack.renderExtra = function(context, left, top) {
+    context.save();
+    context.beginPath();
+
+    // Horizontal line
+    context.moveTo(left + btnSize / 4, top + btnSize / 2);
+    context.lineTo(left + btnSize - btnSize / 4, top + btnSize / 2);
+    // Arrow
+    context.moveTo(left + btnSize / 2, top + btnSize / 4);
+    context.lineTo(left + btnSize / 4, top + btnSize / 2);
+    context.lineTo(left + btnSize / 2, top + btnSize - btnSize / 4);
+
+    context.strokeStyle = "#000";
+    context.stroke();
+    context.restore();
+  };
+  this.btnBack.onClick = function() {
+    that.chessboard.back();
+  };
+
+  // Events manager
+  this.events = new Events();
+  this.events.setUpdateUIHandler(
+    function() {
+      that.redraw();
+    });
+  this.events.registerComponent(this.chessboard);
+  this.events.registerComponent(this.btnNew);
+  this.events.registerComponent(this.btnBack);
 
   // Initialize
   this.init();
@@ -89,11 +139,35 @@ App.prototype = {
     this.canvas.height = this.height - Config.Canvas.margin * 2;
     var boardSize = (this.canvas.width > this.canvas.height ?
       this.canvas.height : this.canvas.width) - Config.Canvas.padding * 2;
-    this.game.setPaintingArea(
+
+    // Check if there is enough space for the buttons
+    var currentSpace = Math.abs(this.canvas.width - this.canvas.height);
+    var spaceNeeded = Config.Button.size + Config.Button.margin * 2;
+    if (currentSpace < spaceNeeded) {
+      boardSize -= spaceNeeded - currentSpace;
+    }
+
+    // Update the chessboard
+    this.chessboard.setPaintingArea(
       Config.Canvas.padding,
       Config.Canvas.padding,
       boardSize
     );
+
+    // Update the buttons
+    var buttonCount = 2;
+    var buttonLengthAll = Config.Button.size * buttonCount + Config.Button.margin * (buttonCount - 1);
+    if (this.canvas.width > this.canvas.height) {
+      var left = Config.Canvas.padding + boardSize + Config.Button.margin;
+      var top = Math.floor((this.canvas.height - buttonLengthAll) / 2);
+      this.btnNew.setPosition(left, top);
+      this.btnBack.setPosition(left, top + Config.Button.size + Config.Button.margin);
+    } else {
+      var left = Math.floor((this.canvas.width - buttonLengthAll) / 2);
+      var top = Config.Canvas.padding + boardSize + Config.Button.margin;
+      this.btnNew.setPosition(left, top);
+      this.btnBack.setPosition(left + Config.Button.size + Config.Button.margin, top);
+    }
 
     this.redraw();
   },
@@ -109,8 +183,8 @@ App.prototype = {
     this.context.fillRect(0, 0, this.canvas.width, this.canvas.height);
     this.context.restore();
 
-    // Redraw tje Game
-    this.game.draw(this.context);
+    // Redraw all managed components
+    this.events.redrawComponents(this.context);
 
     console.log("- canvas redraw")
   },
@@ -122,7 +196,7 @@ App.prototype = {
         that.capture(e);
         break;
       case "mousemove":
-        that.move(e);
+        that.drag(e);
         break;
       case "mouseup":
         that.release(e);
@@ -146,7 +220,7 @@ App.prototype = {
         break;
       case "touchmove":
         if (e.changedTouches.length == 1) {
-          that.move(e.changedTouches[0]);
+          that.drag(e.changedTouches[0]);
         } else if (e.touches.length == 2) {}
         break;
     }
@@ -154,17 +228,17 @@ App.prototype = {
 
   capture: function(e) {
     var pos = this.getEventPosition(e);
-    this.game.onCapture(pos.left, pos.top);
+    this.events.dispatchEvent('capture', pos.left, pos.top);
+  },
+
+  drag: function(e) {
+    var pos = this.getEventPosition(e);
+    this.events.dispatchEvent('drag', pos.left, pos.top);
   },
 
   release: function(e) {
     var pos = this.getEventPosition(e);
-    this.game.onRelease(pos.left, pos.top);
-  },
-
-  move: function(e) {
-    var pos = this.getEventPosition(e);
-    this.game.onMove(pos.left, pos.top);
+    this.events.dispatchEvent('release', pos.left, pos.top);
   },
 
   /* Get the event position on the monitor */

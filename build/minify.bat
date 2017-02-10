@@ -14,7 +14,7 @@ rd /S /Q %OUT%
 md "%OUT%\"
 
 REM Combine JS & CSS files into one file
-type "%SRC%\app.js" "%SRC%\common.js" "%SRC%\config.js" "%SRC%\game.js" > "%OUT%\temp.app.js"
+type "%SRC%\canvas-ui\button.js" "%SRC%\canvas-ui\events.js" "%SRC%\app.js" "%SRC%\chessboard.js" "%SRC%\common.js" "%SRC%\config.js" > "%OUT%\temp.app.js"
 type "%SRC%\web.css" > "%OUT%\temp.app.css"
 
 REM Compress with YUI Compressor  
