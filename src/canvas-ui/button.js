@@ -29,11 +29,12 @@ Button.prototype = {
 
   render: function(context) {
     context.save();
+    context.translate(this.left, this.top);
     context.beginPath();
-    context.moveTo(this.left, this.top);
-    context.lineTo(this.left + this.width, this.top);
-    context.lineTo(this.left + this.width, this.top + this.height);
-    context.lineTo(this.left, this.top + this.height);
+    context.moveTo(0, 0);
+    context.lineTo(this.width, 0);
+    context.lineTo(this.width, this.height);
+    context.lineTo(0, this.height);
     context.closePath();
 
     if (this.capturedPosition) {
@@ -47,12 +48,12 @@ Button.prototype = {
     context.fill();
     context.stroke();
 
-    context.restore();
-
     // Render customized content
     if (typeof this.renderExtra == 'function') {
-      this.renderExtra(context, this.left, this.top);
+      this.renderExtra(context);
     }
+
+    context.restore();
   },
 
   isPointInside: function(left, top) {

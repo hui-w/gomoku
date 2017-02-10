@@ -12,12 +12,12 @@ var Config = {
 
   Board: {
     size: 15,
-    stroke: "RGBA(200, 200, 200, 0.5)"
+    stroke: "RGBA(200, 200, 200, 0.8)"
   },
 
   Selected: {
     stroke: "RGBA(255, 0, 0, 0.5)",
-    dragSensitive: 4
+    dragSensitive: 3
   },
 
   Button: {

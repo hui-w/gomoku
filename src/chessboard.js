@@ -9,8 +9,8 @@ function Chessboard() {
   this.size = 0;
 
   // Caculated values
-  this.right = 0;
-  this.bottom = 0;
+  this.width = 0;
+  this.height = 0;
   this.unitSize = 0;
   this.halfSize = 0;
 
@@ -44,26 +44,28 @@ Chessboard.prototype = {
     this.top = top;
     this.unitSize = Math.floor(size / Config.Board.size);
     this.halfSize = Math.floor(size / Config.Board.size / 2);
-    this.right = left + this.unitSize * Config.Board.size - 1;
-    this.bottom = top + this.unitSize * Config.Board.size - 1;
+    this.width = this.unitSize * Config.Board.size - 1;
+    this.height = this.unitSize * Config.Board.size - 1;
   },
 
   render: function(context) {
+    context.save();
+    context.translate(this.left, this.top);
     this.renderChessboard(context);
     this.renderCells(context);
     this.renderHighlight(context);
+    context.restore();
   },
 
   renderChessboard: function(context) {
     // The rectangle of the visiable chess board
     var rect = {
-      left: this.left + this.halfSize,
-      top: this.top + this.halfSize,
-      right: this.right - this.halfSize,
-      bottom: this.bottom - this.halfSize
+      left: this.halfSize,
+      top: this.halfSize,
+      right: this.width - this.halfSize,
+      bottom: this.height - this.halfSize
     };
 
-    context.save();
     context.beginPath();
     for (var i = 0; i < Config.Board.size; i++) {
       // Horizontal line
@@ -86,7 +88,6 @@ Chessboard.prototype = {
     context.lineWidth = 1;
     context.strokeStyle = Config.Board.stroke;
     context.stroke();
-    context.restore();
   },
 
   renderCells: function(context) {
@@ -95,8 +96,8 @@ Chessboard.prototype = {
       var y = this.stones[i].y;
       var isBlack = this.stones[i].isBlack;
 
-      var left = this.left + x * this.unitSize;
-      var top = this.top + y * this.unitSize;
+      var left = x * this.unitSize;
+      var top = y * this.unitSize;
       var cx = left + this.halfSize;
       var cy = top + this.halfSize;
 
@@ -118,8 +119,8 @@ Chessboard.prototype = {
 
   renderHighlight: function(context) {
     if (this.selectedCell) {
-      var left = this.left + this.selectedCell.x * this.unitSize;
-      var top = this.top + this.selectedCell.y * this.unitSize;
+      var left = this.selectedCell.x * this.unitSize;
+      var top = this.selectedCell.y * this.unitSize;
       var right = left + this.unitSize;
       var bottom = top + this.unitSize;
       var length = Math.floor(this.unitSize / 4);
@@ -204,7 +205,7 @@ Chessboard.prototype = {
     var oldX = this.selectedCell ? this.selectedCell.x : null;
     var oldY = this.selectedCell ? this.selectedCell.y : null;
 
-    if (left < this.left || left > this.right || top < this.top || top > this.bottom) {
+    if (left < this.left || left > this.left + this.width || top < this.top || top > this.top + this.height) {
       this.selectedCell = null;
     } else {
       // Calculate the selected cell

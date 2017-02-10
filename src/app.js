@@ -18,41 +18,37 @@ function App() {
   this.chessboard = new Chessboard();
   var btnSize = Config.Button.size;
   this.btnNew = new Button(0, 0, btnSize, btnSize);
-  this.btnNew.renderExtra = function(context, left, top) {
-    context.save();
+  this.btnNew.renderExtra = function(context) {
     context.beginPath();
 
     // Horizontal line
-    context.moveTo(left + btnSize / 4, top + btnSize / 2);
-    context.lineTo(left + btnSize - btnSize / 4, top + btnSize / 2);
+    context.moveTo(btnSize / 4, btnSize / 2);
+    context.lineTo(btnSize - btnSize / 4, btnSize / 2);
     // Vertical line
-    context.moveTo(left + btnSize / 2, top + btnSize / 4);
-    context.lineTo(left + btnSize / 2, top + btnSize - btnSize / 4);
+    context.moveTo(btnSize / 2, btnSize / 4);
+    context.lineTo(btnSize / 2, btnSize - btnSize / 4);
 
     context.strokeStyle = "#000";
     context.stroke();
-    context.restore();
   };
   this.btnNew.onClick = function() {
     that.chessboard.init();
   };
 
   this.btnBack = new Button(0, 0, btnSize, btnSize);
-  this.btnBack.renderExtra = function(context, left, top) {
-    context.save();
+  this.btnBack.renderExtra = function(context) {
     context.beginPath();
 
     // Horizontal line
-    context.moveTo(left + btnSize / 4, top + btnSize / 2);
-    context.lineTo(left + btnSize - btnSize / 4, top + btnSize / 2);
+    context.moveTo(btnSize / 4, btnSize / 2);
+    context.lineTo(btnSize - btnSize / 4, btnSize / 2);
     // Arrow
-    context.moveTo(left + btnSize / 2, top + btnSize / 4);
-    context.lineTo(left + btnSize / 4, top + btnSize / 2);
-    context.lineTo(left + btnSize / 2, top + btnSize - btnSize / 4);
+    context.moveTo(btnSize / 2, btnSize / 4);
+    context.lineTo(btnSize / 4, btnSize / 2);
+    context.lineTo(btnSize / 2, btnSize - btnSize / 4);
 
     context.strokeStyle = "#000";
     context.stroke();
-    context.restore();
   };
   this.btnBack.onClick = function() {
     that.chessboard.back();
