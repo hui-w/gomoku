@@ -16,18 +16,6 @@ function $() {
   return elements;
 }
 
-/* get the rand number between lower and upper */
-function rand(lower, upper) {
-  return Math.floor(Math.random() * (upper - lower + 1)) + lower;
-}
-
-Array.prototype.removeAt = function(indexNum) {
-  if (isNaN(indexNum) || indexNum > this.length) {
-    return false;
-  }
-  this.splice(indexNum, 1);
-};
-
 Element.prototype.createChild = function(tag, param, innerHTML) {
   var element = document.createElement(tag);
   this.appendChild(element);
