@@ -3,9 +3,9 @@
  * @repo https://github.com/hui-w/gomoku
  * @licence MIT 
  *
- * Gomoku AI whic was by: http://blog.csdn.net/show_me_the_world/article/details/48886027
+ * Gomoku robot whic was by: http://blog.csdn.net/show_me_the_world/article/details/48886027
  */
-function Ai() {
+function Robot() {
   this.chessData = [];
 
   // Init with empty chess board
@@ -17,7 +17,7 @@ function Ai() {
   }
 }
 
-Ai.prototype = {
+Robot.prototype = {
   /**五子棋AI 
    *思路：对棋盘上的每一个空格进行估分，电脑优先在分值高的点落子 
    * 棋型： 

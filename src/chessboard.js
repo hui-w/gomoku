@@ -52,7 +52,7 @@ Chessboard.prototype = {
     context.save();
     context.translate(this.left, this.top);
     this.renderChessboard(context);
-    this.renderCells(context);
+    this.renderStones(context);
     this.renderHighlight(context);
     context.restore();
   },
@@ -90,7 +90,7 @@ Chessboard.prototype = {
     context.stroke();
   },
 
-  renderCells: function(context) {
+  renderStones: function(context) {
     for (var i = 0; i < this.stones.length; i++) {
       var x = this.stones[i].x;
       var y = this.stones[i].y;
