@@ -6,6 +6,7 @@
 function Events() {
   this.components = [];
   this.upateUIHandler = null;
+  this.delayTimer = null;
 }
 
 Events.prototype = {
@@ -14,7 +15,19 @@ Events.prototype = {
   },
 
   registerComponent: function(component) {
-    component.onUpdateUI = this.upateUIHandler;
+    var that = this;
+    component.onUpdateUI = function() {
+      if (that.delayTimer) {
+        // To aviod duplicated render
+        return;
+      }
+
+      that.delayTimer = setTimeout(function() {
+        that.upateUIHandler();
+        that.delayTimer = null;
+      }, 50);
+    };
+
     this.components.push(component);
   },
 
