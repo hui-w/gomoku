@@ -41,8 +41,33 @@ Chessboard.prototype = {
   },
 
   back: function() {
-    this.stones.pop();
-    this.requestRedraw();
+    if (this.stones.length <= 0) {
+      // Nothing to rollback
+      return;
+    }
+
+    if (this.robot.black && this.robot.white) {
+      // Disable back when robots playing
+      return;
+    } else if (!this.robot.black && !this.robot.white) {
+      // Rollback one step when human playing
+      this.stones.pop();
+      this.requestRedraw();
+    } else if (this.stones.length >= 2) {
+      // Human playing with robot
+      this.stones.pop();
+      this.stones.pop();
+      this.requestRedraw();
+    }
+
+    // Highlight the last step
+    if (this.stones.length > 0) {
+      var lastStone = this.stones[this.stones.length - 1];
+      this.selectedCell = {
+        row: lastStone.row,
+        col: lastStone.col
+      };
+    }
   },
 
   isBlack: function() {
