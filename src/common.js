@@ -61,6 +61,27 @@ canvasPrototype.antiFuzzyLine = function(x1, y1, x2, y2) {
   this.lineTo(x2, y2);
 };
 
+canvasPrototype.drawStone = function(isBlack, x, y, r) {
+  var cx = x + r;
+  var cy = y + r;
+
+  this.save();
+  this.beginPath();
+  this.arc(cx, cy, r - 2, 0, 2 * Math.PI);
+  this.closePath();
+  var gradient = this.createRadialGradient(cx + 2, cy - 2, r - 2, cx + 2, cy - 2, 0);
+  if (isBlack) {
+    gradient.addColorStop(0, "#0A0A0A");
+    gradient.addColorStop(1, "#636766");
+  } else {
+    gradient.addColorStop(0, "#D1D1D1");
+    gradient.addColorStop(1, "#F9F9F9");
+  }
+  this.fillStyle = gradient;
+  this.fill();
+  this.restore();
+}
+
 /*
 horizontalAlign: left, center, right
 verticalAlign: top, middle, bottom

@@ -16,9 +16,18 @@ function App() {
 
   // Child components
   this.chessboard = new Chessboard();
+
   var btnSize = Config.Button.size;
+
+  // Button: current player indicator
+  this.playerIndicator = new Panel(0, 0, btnSize, btnSize);
+  //this.playerIndicator.setFillStyle("RGBA(0, 0, 0, 0.5");
+  //this.playerIndicator.setLineWidth(1);
+  //this.playerIndicator.setStrokeStyle("#000000")
+
+  // Button: new game
   this.btnNew = new Button(0, 0, btnSize, btnSize);
-  this.btnNew.renderExtra = function(context) {
+  this.btnNew.renderExtra.push(function(self, context) {
     context.beginPath();
 
     // Horizontal line
@@ -30,13 +39,14 @@ function App() {
 
     context.strokeStyle = "#000";
     context.stroke();
-  };
+  });
   this.btnNew.onClick = function() {
     that.chessboard.init();
   };
 
+  // Button: history back
   this.btnBack = new Button(0, 0, btnSize, btnSize);
-  this.btnBack.renderExtra = function(context) {
+  this.btnBack.renderExtra.push(function(self, context) {
     context.beginPath();
 
     // Horizontal line
@@ -49,20 +59,43 @@ function App() {
 
     context.strokeStyle = "#000";
     context.stroke();
-  };
+  });
   this.btnBack.onClick = function() {
     that.chessboard.back();
   };
 
-  // Events manager
-  this.events = new Events();
-  this.events.setUpdateUIHandler(
+  // Buttons for enabling the robot
+  this.btnBotBlack = new Button(0, 0, btnSize, btnSize / 2);
+  this.btnBotBlack.renderExtra.push(function(self, context) {
+    context.drawStone(true, btnSize / 4, 0, btnSize / 4);
+  });
+  this.btnBotBlack.onClick = function() {
+    that.chessboard.setRobot('black', !that.chessboard.robot.black);
+  };
+  this.btnBotWhite = new Button(0, 0, btnSize, btnSize / 2);
+  this.btnBotWhite.renderExtra.push(function(self, context) {
+    context.drawStone(false, btnSize / 4, 0, btnSize / 4);
+  });
+  this.btnBotWhite.onClick = function() {
+    that.chessboard.setRobot('white', !that.chessboard.robot.white);
+  };
+
+  // Label
+  this.lblRobot = new Label(0, 0, '');
+
+  // UI manager
+  this.uiManager = new UIManager();
+  this.uiManager.setRedrawHandler(
     function() {
       that.redraw();
     });
-  this.events.registerComponent(this.chessboard);
-  this.events.registerComponent(this.btnNew);
-  this.events.registerComponent(this.btnBack);
+  this.uiManager.registerComponent(this.chessboard);
+  this.uiManager.registerComponent(this.playerIndicator);
+  this.uiManager.registerComponent(this.btnNew);
+  this.uiManager.registerComponent(this.btnBack);
+  this.uiManager.registerComponent(this.btnBotBlack);
+  this.uiManager.registerComponent(this.btnBotWhite);
+  this.uiManager.registerComponent(this.lblRobot);
 
   // Initialize
   this.init();
@@ -151,27 +184,64 @@ App.prototype = {
     );
 
     // Update the buttons
-    var buttonCount = 2;
+    var buttonCount = 4;
     var buttonLengthAll = Config.Button.size * buttonCount + Config.Button.margin * (buttonCount - 1);
     if (this.canvas.width > this.canvas.height) {
+      // Buttons on the right side
       var left = Config.Canvas.padding + boardSize + Config.Button.margin;
       var top = Math.floor((this.canvas.height - buttonLengthAll) / 2);
+
+      this.playerIndicator.setPosition(left, top);
+
+      top += Config.Button.size + Config.Button.margin;
       this.btnNew.setPosition(left, top);
-      this.btnBack.setPosition(left, top + Config.Button.size + Config.Button.margin);
+
+      top += Config.Button.size + Config.Button.margin;
+      this.btnBack.setPosition(left, top);
+
+      top += Config.Button.size + Config.Button.margin;
+      this.btnBotBlack.setPosition(left, top);
+
+      top += Config.Button.size / 2;
+      this.btnBotWhite.setPosition(left, top);
     } else {
+      // Buttons on the bottom side
       var left = Math.floor((this.canvas.width - buttonLengthAll) / 2);
       var top = Config.Canvas.padding + boardSize + Config.Button.margin;
+
+      this.playerIndicator.setPosition(left, top);
+
+      left += Config.Button.size + Config.Button.margin;
       this.btnNew.setPosition(left, top);
-      this.btnBack.setPosition(left + Config.Button.size + Config.Button.margin, top);
+
+      left += Config.Button.size + Config.Button.margin;
+      this.btnBack.setPosition(left, top);
+
+      left += Config.Button.size + Config.Button.margin;
+      this.btnBotBlack.setPosition(left, top);
+
+      top += Config.Button.size / 2;
+      this.btnBotWhite.setPosition(left, top);
     }
 
-    this.redraw();
+    // Let UIManager to handle the redraw to avoid duplicated renderring
+    // this.redraw();
+    this.uiManager.requestRedraw();
   },
 
   redraw: function() {
+    var that = this;
+
     // Clear the canvas
     this.canvas.width = this.canvas.width;
     this.canvas.height = this.canvas.height;
+
+    // Get the component status before redraw
+    this.playerIndicator.renderExtra = function(self, context) {
+      context.drawStone(that.chessboard.isBlack(), 0, 0, Math.floor(self.width / 2));
+    }
+    this.btnBotBlack.setOn(this.chessboard.robot.black);
+    this.btnBotWhite.setOn(this.chessboard.robot.white);
 
     // Draw the background
     this.context.save();
@@ -180,7 +250,7 @@ App.prototype = {
     this.context.restore();
 
     // Redraw all managed components
-    this.events.redrawComponents(this.context);
+    this.uiManager.redrawComponents(this.context);
 
     console.log("- canvas redraw")
   },
@@ -224,17 +294,17 @@ App.prototype = {
 
   capture: function(e) {
     var pos = this.getEventPosition(e);
-    this.events.dispatchEvent('capture', pos.left, pos.top);
+    this.uiManager.dispatchEvent('capture', pos.left, pos.top);
   },
 
   drag: function(e) {
     var pos = this.getEventPosition(e);
-    this.events.dispatchEvent('drag', pos.left, pos.top);
+    this.uiManager.dispatchEvent('drag', pos.left, pos.top);
   },
 
   release: function(e) {
     var pos = this.getEventPosition(e);
-    this.events.dispatchEvent('release', pos.left, pos.top);
+    this.uiManager.dispatchEvent('release', pos.left, pos.top);
   },
 
   /* Get the event position on the monitor */

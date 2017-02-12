@@ -4,56 +4,53 @@
  * @licence MIT 
  */
 function Button(left, top, width, height) {
-  this.left = left;
-  this.top = top;
-  this.width = width;
-  this.height = height;
+  // Inherits all members from base class
+  Component(this, left, top, width, height);
+
+  // Initialize
+  this.type = 'button';
+
+  this.isOn = false;
 
   // The position where mouse was down
   this.capturedPosition = null;
 
   // Event handler
-  this.onClick = null;
-  this.onUpdateUI = null;
+  this.onClick = [];
 
-  // Extra render
-  this.renderExtra = null;
+  this.init();
 }
 
 Button.prototype = {
-  setPosition: function(left, top) {
-    this.left = left;
-    this.top = top;
-    this.triggerUpdateUI();
+  init: function() {
+    this.renderExtra.push(function(self, context) {
+      context.beginPath();
+      context.moveTo(0, 0);
+      context.lineTo(self.width, 0);
+      context.lineTo(self.width, self.height);
+      context.lineTo(0, self.height);
+      context.closePath();
+
+      if (self.capturedPosition || self.isOn) {
+        context.fillStyle = "#B5B5B5";
+        context.strokeStyle = "#979797";
+      } else {
+        context.fillStyle = "#EBEBEB";
+        context.strokeStyle = "#979797";
+      }
+
+      context.fill();
+      context.stroke();
+    });
   },
 
-  render: function(context) {
-    context.save();
-    context.translate(this.left, this.top);
-    context.beginPath();
-    context.moveTo(0, 0);
-    context.lineTo(this.width, 0);
-    context.lineTo(this.width, this.height);
-    context.lineTo(0, this.height);
-    context.closePath();
-
-    if (this.capturedPosition) {
-      context.fillStyle = "#B5B5B5";
-      context.strokeStyle = "#979797";
-    } else {
-      context.fillStyle = "#EBEBEB";
-      context.strokeStyle = "#979797";
+  setOn: function(isOn) {
+    if (this.isOn === isOn) {
+      return;
     }
-
-    context.fill();
-    context.stroke();
-
-    // Render customized content
-    if (typeof this.renderExtra == 'function') {
-      this.renderExtra(context);
-    }
-
-    context.restore();
+    
+    this.isOn = isOn;
+    this.requestRedraw();
   },
 
   isPointInside: function(left, top) {
@@ -69,7 +66,7 @@ Button.prototype = {
     }
 
     this.capturedPosition = { left: left, top: top };
-    this.triggerUpdateUI();
+    this.requestRedraw();
   },
 
   onRelease: function(left, top) {
@@ -81,7 +78,7 @@ Button.prototype = {
       // Both Capture and Release event happens on the component
       if (typeof this.onClick == 'function') {
         this.onClick();
-      } else if (typeof this.onClick == 'array') {
+      } else if (typeof this.onClick == 'object') {
         for (var i = 0; i < this.onClick.length; i++) {
           var handler = this.onClick[i];
           if (typeof handler == 'function') {
@@ -92,16 +89,10 @@ Button.prototype = {
     }
 
     this.capturedPosition = null;
-    this.triggerUpdateUI();
+    this.requestRedraw();
   },
 
   onDrag: function(left, top) {
 
-  },
-
-  triggerUpdateUI: function() {
-    if (typeof this.onUpdateUI == 'function') {
-      this.onUpdateUI();
-    }
   }
 }

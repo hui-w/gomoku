@@ -14,29 +14,86 @@ function Chessboard() {
   this.unitSize = 0;
   this.halfSize = 0;
 
-  // Data {x, y, isBlack}
-  this.isBlack = true;
+  // Data {row, col}
   this.stones = [];
+
+  this.robot = {
+    black: false,
+    white: false
+  };
 
   this.capturedPos = null; // {left, top}
   this.dragOffset = null; // {left, top}
-  this.selectedCell = null; // {x, y}
+  this.selectedCell = null; // {row, col}
 
   // The event to redraw
-  this.onUpdateUI = null;
+  this.onRequestRedraw = null;
 }
 
 Chessboard.prototype = {
   init: function() {
-    this.isBlack = true;
     this.stones = [];
-    this.triggerUpdateUI();
+    this.robot = {
+      black: false,
+      white: false
+    };
+    this.requestRedraw();
   },
 
   back: function() {
-    this.isBlack = !this.isBlack;
     this.stones.pop();
-    this.triggerUpdateUI();
+    this.requestRedraw();
+  },
+
+  isBlack: function() {
+    return this.stones.length % 2 === 0;
+  },
+
+  putStone: function(row, col) {
+    var that = this;
+
+    var stone = {
+      row: row,
+      col: col
+    };
+    this.selectedCell = stone;
+    this.stones.push(stone);
+    this.requestRedraw();
+
+    setTimeout(function() {
+      that.robotPlay();
+    }, 100);
+  },
+
+  robotPlay: function() {
+    if ((!this.robot.black && this.isBlack()) ||
+      (!this.robot.white && !this.isBlack())
+    ) {
+      return;
+    }
+
+    if (this.stones.length <= 0) {
+      // First step
+      var pos = Math.floor(Config.Board.size / 2);
+      this.putStone(pos, pos);
+    } else {
+      // Robot will make the decision
+      var robot = new Robot(this.stones);
+      var position = robot.getPosition();
+
+      if (position.length === 2 && position[0] !== undefined && position[1] !== undefined) {
+        var row = position[0];
+        var col = position[1];
+        this.putStone(row, col);
+      }
+    }
+  },
+
+  setRobot: function(key, value) {
+    this.robot[key] = value;
+    if (this.robot.black || this.robot.white) {
+      this.robotPlay();
+    }
   },
 
   setPaintingArea: function(left, top, size) {
@@ -92,35 +149,20 @@ Chessboard.prototype = {
 
   renderStones: function(context) {
     for (var i = 0; i < this.stones.length; i++) {
-      var x = this.stones[i].x;
-      var y = this.stones[i].y;
-      var isBlack = this.stones[i].isBlack;
+      var row = this.stones[i].row;
+      var col = this.stones[i].col;
 
-      var left = x * this.unitSize;
-      var top = y * this.unitSize;
-      var cx = left + this.halfSize;
-      var cy = top + this.halfSize;
+      var left = col * this.unitSize;
+      var top = row * this.unitSize;
 
-      context.beginPath();
-      context.arc(cx, cy, this.halfSize - 2, 0, 2 * Math.PI);
-      context.closePath();
-      var gradient = context.createRadialGradient(cx + 2, cy - 2, this.halfSize - 2, cx + 2, cy - 2, 0);
-      if (!isBlack) {
-        gradient.addColorStop(0, "#D1D1D1");
-        gradient.addColorStop(1, "#F9F9F9");
-      } else {
-        gradient.addColorStop(0, "#0A0A0A");
-        gradient.addColorStop(1, "#636766");
-      }
-      context.fillStyle = gradient;
-      context.fill();
+      context.drawStone(i % 2 == 0, left, top, this.halfSize);
     }
   },
 
   renderHighlight: function(context) {
     if (this.selectedCell) {
-      var left = this.selectedCell.x * this.unitSize;
-      var top = this.selectedCell.y * this.unitSize;
+      var left = this.selectedCell.col * this.unitSize;
+      var top = this.selectedCell.row * this.unitSize;
       var right = left + this.unitSize;
       var bottom = top + this.unitSize;
       var length = Math.floor(this.unitSize / 4);
@@ -187,23 +229,15 @@ Chessboard.prototype = {
     this.capturedPos = null;
     this.dragOffset = null;
 
-    // Set the selected cell
-    if (this.selectedCell && !this.hasStone(this.selectedCell.x, this.selectedCell.y)) {
-      this.stones.push({
-        x: this.selectedCell.x,
-        y: this.selectedCell.y,
-        isBlack: this.isBlack
-      });
-
-      this.isBlack = !this.isBlack;
-
-      this.triggerUpdateUI();
+    // Put a stone
+    if (this.selectedCell && !this.hasStone(this.selectedCell.row, this.selectedCell.col)) {
+      this.putStone(this.selectedCell.row, this.selectedCell.col);
     }
   },
 
   setSelectedCell: function(left, top) {
-    var oldX = this.selectedCell ? this.selectedCell.x : null;
-    var oldY = this.selectedCell ? this.selectedCell.y : null;
+    var oldRow = this.selectedCell ? this.selectedCell.row : null;
+    var oldCol = this.selectedCell ? this.selectedCell.col : null;
 
     if (left < this.left || left > this.left + this.width || top < this.top || top > this.top + this.height) {
       this.selectedCell = null;
@@ -212,24 +246,24 @@ Chessboard.prototype = {
       this.selectedCell = this.posToCell(left, top);
     }
 
-    var newX = this.selectedCell ? this.selectedCell.x : null;
-    var newY = this.selectedCell ? this.selectedCell.y : null;
+    var newRow = this.selectedCell ? this.selectedCell.row : null;
+    var newCol = this.selectedCell ? this.selectedCell.col : null;
 
-    if (newX != oldX || newY != oldY) {
-      this.triggerUpdateUI();
+    if (newRow != oldRow || newCol != oldCol) {
+      this.requestRedraw();
     }
   },
 
   posToCell: function(left, top) {
     return {
-      x: Math.floor((left - this.left) / this.unitSize),
-      y: Math.floor((top - this.top) / this.unitSize)
+      col: Math.floor((left - this.left) / this.unitSize),
+      row: Math.floor((top - this.top) / this.unitSize)
     };
   },
 
-  hasStone: function(x, y) {
+  hasStone: function(row, col) {
     for (var i = 0; i < this.stones.length; i++) {
-      if (x === this.stones[i].x && y === this.stones[i].y) {
+      if (row === this.stones[i].row && col === this.stones[i].col) {
         return true;
       }
     }
@@ -237,9 +271,9 @@ Chessboard.prototype = {
     return false;
   },
 
-  triggerUpdateUI: function() {
-    if (typeof this.onUpdateUI == 'function') {
-      this.onUpdateUI();
+  requestRedraw: function() {
+    if (typeof this.onRequestRedraw == 'function') {
+      this.onRequestRedraw();
     }
   }
 }

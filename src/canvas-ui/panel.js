@@ -6,10 +6,17 @@
  * Canvas panel
  */
 function Panel(left, top, width, height) {
-	//inherits all members from base class
-	Component(Panel, left, top, width, height);
+  // Inherits all members from base class
+  Component(this, left, top, width, height);
+
+  // Initialize
+  this.type = 'panel';
+
+  this.init();
 }
 
 Panel.prototype = {
+  init: function() {
 
+  }
 }

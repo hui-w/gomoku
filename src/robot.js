@@ -5,7 +5,7 @@
  *
  * Gomoku robot whic was by: http://blog.csdn.net/show_me_the_world/article/details/48886027
  */
-function Robot() {
+function Robot(stones) {
   this.chessData = [];
 
   // Init with empty chess board
@@ -14,6 +14,14 @@ function Robot() {
     for (var j = 0; j < 15; j++) {
       this.chessData[i][j] = 0;
     }
+  }
+
+  // Merge from the stone history
+  for (var i = 0; i < stones.length; i++) {
+    var row = stones[i].row;
+    var col = stones[i].col;
+    var isBlack = i % 2 === 0;
+    this.chessData[row][col] = isBlack ? 1 : 2;
   }
 }
 
@@ -113,7 +121,7 @@ Robot.prototype = {
     }
     count -= 1;
     // console.log(x + "," + y + "位置上的左右得分为" + model(count, death));  
-    return model(count, death);
+    return this.model(count, death);
   },
 
   topBottom: function(x, y, num) {
@@ -152,7 +160,7 @@ Robot.prototype = {
     }
     count -= 1;
     // console.log(x + "," + y + "位置上的上下斜得分为" + model(count, death));  
-    return model(count, death);
+    return this.model(count, death);
   },
 
   rightBottom: function(x, y, num) {
@@ -195,7 +203,7 @@ Robot.prototype = {
     }
     count -= 1;
     // console.log(x + "," + y + "位置上的右下斜得分为" + model(count, death));  
-    return model(count, death);
+    return this.model(count, death);
   },
 
   rightTop: function(x, y, num) {
@@ -238,7 +246,7 @@ Robot.prototype = {
     }
     count -= 1;
     // console.log(x + "," + y + "位置上的右上斜得分为" + model(count, death));  
-    return model(count, death);
+    return this.model(count, death);
   },
 
   /**罗列相等效果的棋型(此处只考虑常见的情况，双成五，双活四等少概率事件不考虑) 
