@@ -7,7 +7,7 @@ A Javascript and Canvas implementation of Gomoku game (aka Gobang or Five in a R
 
 2) Human vs. Robot
 
-3) Robot vs. Robot (Just for fun, as they always running neck to neck)
+3) Robot vs. Robot (Just for fun, as they always run neck to neck)
 
 ## Demo
 https://hui-w.github.io/gomoku
