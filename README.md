@@ -2,8 +2,11 @@
 A Javascript and Canvas implementation of Gomoku game (aka Gobang or Five in a Row)
 
 ## Feature
+
 1) Human vs. Human
+
 2) Human vs. Robot
+
 3) Robot vs. Robot (Just for fun, as they always running neck to neck)
 
 ## Demo
