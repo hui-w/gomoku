@@ -133,10 +133,12 @@ Chessboard.prototype = {
     };
     this.selectedCell = stone;
     this.stones.push(stone);
-    this.syncToChessData(stone, this.isBlack() ? 2 : 1); //Use the previous color
+
+    var stoneValue = this.isBlack() ? 2 : 1; // The value before this stone was put
+    this.syncToChessData(stone, stoneValue);
 
     // Check if game is over
-    this.rule.syncStatus(row, col);
+    this.rule.syncStatus(row, col, stoneValue);
 
     this.requestRedraw();
 
@@ -283,10 +285,10 @@ Chessboard.prototype = {
   renderResult: function(context) {
     if (this.rule.isGameOver()) {
       var result = this.rule.result;
-      var left1 = result[0] * this.unitSize + this.halfSize;
-      var top1 = result[1] * this.unitSize + this.halfSize;
-      var left2 = result[2] * this.unitSize + this.halfSize;
-      var top2 = result[3] * this.unitSize + this.halfSize;
+      var top1 = result[0] * this.unitSize + this.halfSize;
+      var left1 = result[1] * this.unitSize + this.halfSize;
+      var top2 = result[2] * this.unitSize + this.halfSize;
+      var left2 = result[3] * this.unitSize + this.halfSize;
       context.save();
       context.beginPath();
       context.moveTo(left1, top1);
