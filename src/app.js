@@ -80,8 +80,22 @@ function App() {
     that.chessboard.setRobot('white', !that.chessboard.robot.white);
   };
 
-  // Label
-  this.lblRobot = new Label(0, 0, '');
+  // Labels
+  this.lblCurrent = new Label(0, 0, 'Player');
+  this.lblCurrent.setHorizontalAlign('center');
+  this.lblCurrent.setVerticalAlign('bottom');
+
+  this.lblNew = new Label(0, 0, 'New');
+  this.lblNew.setHorizontalAlign('center');
+  this.lblNew.setVerticalAlign('bottom');
+
+  this.lblBack = new Label(0, 0, 'Back');
+  this.lblBack.setHorizontalAlign('center');
+  this.lblBack.setVerticalAlign('bottom');
+
+  this.lblRobot = new Label(0, 0, 'Robot');
+  this.lblRobot.setHorizontalAlign('center');
+  this.lblRobot.setVerticalAlign('bottom');
 
   // UI manager
   this.uiManager = new UIManager();
@@ -95,6 +109,9 @@ function App() {
   this.uiManager.registerComponent(this.btnBack);
   this.uiManager.registerComponent(this.btnBotBlack);
   this.uiManager.registerComponent(this.btnBotWhite);
+  this.uiManager.registerComponent(this.lblCurrent);
+  this.uiManager.registerComponent(this.lblNew);
+  this.uiManager.registerComponent(this.lblBack);
   this.uiManager.registerComponent(this.lblRobot);
 
   // Initialize
@@ -191,15 +208,22 @@ App.prototype = {
       var left = Config.Canvas.padding + boardSize + Config.Button.margin;
       var top = Math.floor((this.canvas.height - buttonLengthAll) / 2);
 
+      // Player indicator
+      this.lblCurrent.setPosition(left + Config.Button.size / 2, top - 2);
       this.playerIndicator.setPosition(left, top);
 
+      // Buttons
       top += Config.Button.size + Config.Button.margin;
+      this.lblNew.setPosition(left + Config.Button.size / 2, top - 2);
       this.btnNew.setPosition(left, top);
 
       top += Config.Button.size + Config.Button.margin;
+      this.lblBack.setPosition(left + Config.Button.size / 2, top - 2);
       this.btnBack.setPosition(left, top);
 
+      // Robots label and buttons
       top += Config.Button.size + Config.Button.margin;
+      this.lblRobot.setPosition(left + Config.Button.size / 2, top - 2); 
       this.btnBotBlack.setPosition(left, top);
 
       top += Config.Button.size / 2;
@@ -209,15 +233,22 @@ App.prototype = {
       var left = Math.floor((this.canvas.width - buttonLengthAll) / 2);
       var top = Config.Canvas.padding + boardSize + Config.Button.margin;
 
+      // Player indicator
+      this.lblCurrent.setPosition(left + Config.Button.size / 2, top - 2);
       this.playerIndicator.setPosition(left, top);
 
+      // Buttons
       left += Config.Button.size + Config.Button.margin;
+      this.lblNew.setPosition(left + Config.Button.size / 2, top - 2);
       this.btnNew.setPosition(left, top);
 
       left += Config.Button.size + Config.Button.margin;
+      this.lblBack.setPosition(left + Config.Button.size / 2, top - 2);
       this.btnBack.setPosition(left, top);
 
+      // Robots label and buttons
       left += Config.Button.size + Config.Button.margin;
+      this.lblRobot.setPosition(left + Config.Button.size / 2, top - 2); 
       this.btnBotBlack.setPosition(left, top);
 
       top += Config.Button.size / 2;
