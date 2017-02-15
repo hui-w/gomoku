@@ -17,11 +17,15 @@ function Chessboard() {
   // Data {row, col}
   this.stones = [];
 
+  // Array for chessboard data
+  this.chessData = null;
+
   this.robotConfig = {
     black: false,
     white: false
   };
-  this.judge = new Judge();
+  this.robot = new Robot(this);
+  this.rule = new Rule(this);
 
   this.capturedPos = null; // {left, top}
   this.dragOffset = null; // {left, top}
@@ -29,16 +33,50 @@ function Chessboard() {
 
   // The event to redraw
   this.onRequestRedraw = null;
+
+  // Init the chess data array
+  this.syncToChessData();
 }
 
 Chessboard.prototype = {
-  init: function() {
+  // Sync stones array to the rectangular array
+  // newVal: 0 - empty; 1 - black; 2 - white
+  syncToChessData: function(stone, newVal) {
+    if (arguments.length === 2) {
+      // Update the rectangular array
+      var row = stone.row;
+      var col = stone.col;
+      this.chessData[row][col] = newVal;
+    }
+
+    // Sync from the stone list
+    this.chessData = [];
+
+    // Init with empty chess board
+    for (var i = 0; i < Config.Board.size; i++) {
+      this.chessData[i] = [];
+      for (var j = 0; j < Config.Board.size; j++) {
+        this.chessData[i][j] = 0;
+      }
+    }
+
+    // Merge from the stone history
+    for (var i = 0; i < this.stones.length; i++) {
+      var row = this.stones[i].row;
+      var col = this.stones[i].col;
+      var isBlack = i % 2 === 0;
+      this.chessData[row][col] = isBlack ? 1 : 2;
+    }
+  },
+
+  reset: function() {
     this.stones = [];
+    this.syncToChessData();
     this.robotConfig = {
       black: false,
       white: false
     };
-    this.judge = new Judge();
+    this.rule.reset();
     this.requestRedraw();
   },
 
@@ -53,11 +91,14 @@ Chessboard.prototype = {
       return;
     } else if (!this.robotConfig.black && !this.robotConfig.white) {
       // Rollback one step when human playing
-      this.stones.pop();
+      var stone = this.stones.pop();
+      this.syncToChessData(stone, 0);
     } else if (this.stones.length >= 2) {
       // Human playing with robot
-      this.stones.pop();
-      this.stones.pop();
+      var stone = this.stones.pop();
+      this.syncToChessData(stone, 0);
+      stone = this.stones.pop();
+      this.syncToChessData(stone, 0);
     }
 
     // Highlight the last step
@@ -70,7 +111,7 @@ Chessboard.prototype = {
     }
 
     // Update the judge
-    this.judge.sync(this.stones);
+    this.rule.syncStatus();
     this.requestRedraw();
   },
 
@@ -81,7 +122,7 @@ Chessboard.prototype = {
   putStone: function(row, col) {
     var that = this;
 
-    if (this.judge.isGameOver()) {
+    if (this.rule.isGameOver()) {
       // The Game is already over
       return;
     }
@@ -92,13 +133,14 @@ Chessboard.prototype = {
     };
     this.selectedCell = stone;
     this.stones.push(stone);
+    this.syncToChessData(stone, this.isBlack() ? 2 : 1); //Use the previous color
 
     // Check if game is over
-    this.judge.sync(this.stones);
+    this.rule.syncStatus(row, col);
 
     this.requestRedraw();
 
-    if (!this.judge.isGameOver()) {
+    if (!this.rule.isGameOver()) {
       // Let robot play
       setTimeout(function() {
         that.robotPlay();
@@ -119,8 +161,7 @@ Chessboard.prototype = {
       this.putStone(pos, pos);
     } else {
       // Robot will make the decision
-      var robot = new Robot(this.stones);
-      var position = robot.getPosition();
+      var position = this.robot.getPosition();
 
       if (position.length === 2 && position[0] !== undefined && position[1] !== undefined) {
         var row = position[0];
@@ -240,8 +281,8 @@ Chessboard.prototype = {
   },
 
   renderResult: function(context) {
-    if (this.judge.isGameOver()) {
-      var result = this.judge.result;
+    if (this.rule.isGameOver()) {
+      var result = this.rule.result;
       var left1 = result[0] * this.unitSize + this.halfSize;
       var top1 = result[1] * this.unitSize + this.halfSize;
       var left2 = result[2] * this.unitSize + this.halfSize;

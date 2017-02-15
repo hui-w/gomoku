@@ -41,7 +41,7 @@ function App() {
     context.stroke();
   });
   this.btnNew.onClick = function() {
-    that.chessboard.init();
+    that.chessboard.reset();
   };
 
   // Button: history back

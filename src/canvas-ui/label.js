@@ -12,8 +12,8 @@ function Label(left, top, text) {
   // Initialize
   this.type = 'label';
   this.font = {
-    size: 10,
-    face: "verdana",
+    size: 12,
+    face: "Arial, Helvetica, sans-serif",
     color: "#000000"
   };
 

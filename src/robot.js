@@ -5,8 +5,8 @@
  *
  * Gomoku robot whic was by: http://blog.csdn.net/show_me_the_world/article/details/48886027
  */
-function Robot(stones) {
-  this.chessData = stonesToChessboard(stones);
+function Robot(chessBoard) {
+  this.chessBoard = chessBoard;
 }
 
 Robot.prototype = {
@@ -49,7 +49,7 @@ Robot.prototype = {
     var score = 0;
     for (var x = 0; x < 15; x++) {
       for (var y = 0; y < 15; y++) {
-        if (this.chessData[x][y] == 0) {
+        if (this.chessBoard.chessData[x][y] == 0) {
           if (this.judge(x, y) > score) {
             score = this.judge(x, y);
             a[0] = x;
@@ -77,7 +77,7 @@ Robot.prototype = {
     for (var i = 0; i < 15; i++) {
       arr[i] = new Array(15);
       for (var j = 0; j < 15; j++) {
-        arr[i][j] = this.chessData[i][j];
+        arr[i][j] = this.chessBoard.chessData[i][j];
       }
     }
     arr[x][y] = num;
@@ -116,7 +116,7 @@ Robot.prototype = {
     for (var i = 0; i < 15; i++) {
       arr[i] = new Array(15);
       for (var j = 0; j < 15; j++) {
-        arr[i][j] = this.chessData[i][j];
+        arr[i][j] = this.chessBoard.chessData[i][j];
       }
     }
     arr[x][y] = num;
@@ -155,7 +155,7 @@ Robot.prototype = {
     for (var i = 0; i < 15; i++) {
       arr[i] = new Array(15);
       for (var j = 0; j < 15; j++) {
-        arr[i][j] = this.chessData[i][j];
+        arr[i][j] = this.chessBoard.chessData[i][j];
       }
     }
     arr[x][y] = num;
@@ -198,7 +198,7 @@ Robot.prototype = {
     for (var i = 0; i < 15; i++) {
       arr[i] = new Array(15);
       for (var j = 0; j < 15; j++) {
-        arr[i][j] = this.chessData[i][j];
+        arr[i][j] = this.chessBoard.chessData[i][j];
       }
     }
     arr[x][y] = num;

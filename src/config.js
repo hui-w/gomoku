@@ -22,7 +22,7 @@ var Config = {
   },
 
   Button: {
-    size: 40,
-    margin: 20
+    size: 38,
+    margin: 28
   }
 }
