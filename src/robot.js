@@ -6,23 +6,7 @@
  * Gomoku robot whic was by: http://blog.csdn.net/show_me_the_world/article/details/48886027
  */
 function Robot(stones) {
-  this.chessData = [];
-
-  // Init with empty chess board
-  for (var i = 0; i < 15; i++) {
-    this.chessData[i] = [];
-    for (var j = 0; j < 15; j++) {
-      this.chessData[i][j] = 0;
-    }
-  }
-
-  // Merge from the stone history
-  for (var i = 0; i < stones.length; i++) {
-    var row = stones[i].row;
-    var col = stones[i].col;
-    var isBlack = i % 2 === 0;
-    this.chessData[row][col] = isBlack ? 1 : 2;
-  }
+  this.chessData = stonesToChessboard(stones);
 }
 
 Robot.prototype = {

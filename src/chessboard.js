@@ -17,10 +17,11 @@ function Chessboard() {
   // Data {row, col}
   this.stones = [];
 
-  this.robot = {
+  this.robotConfig = {
     black: false,
     white: false
   };
+  this.judge = new Judge();
 
   this.capturedPos = null; // {left, top}
   this.dragOffset = null; // {left, top}
@@ -33,10 +34,11 @@ function Chessboard() {
 Chessboard.prototype = {
   init: function() {
     this.stones = [];
-    this.robot = {
+    this.robotConfig = {
       black: false,
       white: false
     };
+    this.judge = new Judge();
     this.requestRedraw();
   },
 
@@ -46,18 +48,16 @@ Chessboard.prototype = {
       return;
     }
 
-    if (this.robot.black && this.robot.white) {
+    if (this.robotConfig.black && this.robotConfig.white) {
       // Disable back when robots playing
       return;
-    } else if (!this.robot.black && !this.robot.white) {
+    } else if (!this.robotConfig.black && !this.robotConfig.white) {
       // Rollback one step when human playing
       this.stones.pop();
-      this.requestRedraw();
     } else if (this.stones.length >= 2) {
       // Human playing with robot
       this.stones.pop();
       this.stones.pop();
-      this.requestRedraw();
     }
 
     // Highlight the last step
@@ -68,6 +68,10 @@ Chessboard.prototype = {
         col: lastStone.col
       };
     }
+
+    // Update the judge
+    this.judge.sync(this.stones);
+    this.requestRedraw();
   },
 
   isBlack: function() {
@@ -77,22 +81,34 @@ Chessboard.prototype = {
   putStone: function(row, col) {
     var that = this;
 
+    if (this.judge.isGameOver()) {
+      // The Game is already over
+      return;
+    }
+
     var stone = {
       row: row,
       col: col
     };
     this.selectedCell = stone;
     this.stones.push(stone);
+
+    // Check if game is over
+    this.judge.sync(this.stones);
+
     this.requestRedraw();
 
-    setTimeout(function() {
-      that.robotPlay();
-    }, 100);
+    if (!this.judge.isGameOver()) {
+      // Let robot play
+      setTimeout(function() {
+        that.robotPlay();
+      }, 100);
+    }
   },
 
   robotPlay: function() {
-    if ((!this.robot.black && this.isBlack()) ||
-      (!this.robot.white && !this.isBlack())
+    if ((!this.robotConfig.black && this.isBlack()) ||
+      (!this.robotConfig.white && !this.isBlack())
     ) {
       return;
     }
@@ -115,8 +131,8 @@ Chessboard.prototype = {
   },
 
   setRobot: function(key, value) {
-    this.robot[key] = value;
-    if (this.robot.black || this.robot.white) {
+    this.robotConfig[key] = value;
+    if (this.robotConfig.black || this.robotConfig.white) {
       this.robotPlay();
     }
   },
@@ -136,6 +152,7 @@ Chessboard.prototype = {
     this.renderChessboard(context);
     this.renderStones(context);
     this.renderHighlight(context);
+    this.renderResult(context);
     context.restore();
   },
 
@@ -217,6 +234,25 @@ Chessboard.prototype = {
 
       context.lineWidth = 2;
       context.strokeStyle = Config.Selected.stroke;
+      context.stroke();
+      context.restore();
+    }
+  },
+
+  renderResult: function(context) {
+    if (this.judge.isGameOver()) {
+      var result = this.judge.result;
+      var left1 = result[0] * this.unitSize + this.halfSize;
+      var top1 = result[1] * this.unitSize + this.halfSize;
+      var left2 = result[2] * this.unitSize + this.halfSize;
+      var top2 = result[3] * this.unitSize + this.halfSize;
+      context.save();
+      context.beginPath();
+      context.moveTo(left1, top1);
+      context.lineTo(left2, top2);
+
+      context.lineWidth = this.halfSize / 2;
+      context.strokeStyle = Config.Board.resultStyle;
       context.stroke();
       context.restore();
     }

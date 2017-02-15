@@ -70,14 +70,14 @@ function App() {
     context.drawStone(true, btnSize / 4, 0, btnSize / 4);
   });
   this.btnBotBlack.onClick = function() {
-    that.chessboard.setRobot('black', !that.chessboard.robot.black);
+    that.chessboard.setRobot('black', !that.chessboard.robotConfig.black);
   };
   this.btnBotWhite = new Button(0, 0, btnSize, btnSize / 2);
   this.btnBotWhite.renderExtra.push(function(self, context) {
     context.drawStone(false, btnSize / 4, 0, btnSize / 4);
   });
   this.btnBotWhite.onClick = function() {
-    that.chessboard.setRobot('white', !that.chessboard.robot.white);
+    that.chessboard.setRobot('white', !that.chessboard.robotConfig.white);
   };
 
   // Labels
@@ -271,8 +271,8 @@ App.prototype = {
     this.playerIndicator.renderExtra = function(self, context) {
       context.drawStone(that.chessboard.isBlack(), 0, 0, Math.floor(self.width / 2));
     }
-    this.btnBotBlack.setOn(this.chessboard.robot.black);
-    this.btnBotWhite.setOn(this.chessboard.robot.white);
+    this.btnBotBlack.setOn(this.chessboard.robotConfig.black);
+    this.btnBotWhite.setOn(this.chessboard.robotConfig.white);
 
     // Draw the background
     this.context.save();

@@ -16,6 +16,29 @@ function $() {
   return elements;
 }
 
+// Convert stones list to an array of chessboard
+function stonesToChessboard(stones) {
+  var chessData = [];
+
+  // Init with empty chess board
+  for (var i = 0; i < Config.Board.size; i++) {
+    chessData[i] = [];
+    for (var j = 0; j < Config.Board.size; j++) {
+      chessData[i][j] = 0;
+    }
+  }
+
+  // Merge from the stone history
+  for (var i = 0; i < stones.length; i++) {
+    var row = stones[i].row;
+    var col = stones[i].col;
+    var isBlack = i % 2 === 0;
+    chessData[row][col] = isBlack ? 1 : 2;
+  }
+
+  return chessData;
+}
+
 Element.prototype.createChild = function(tag, param, innerHTML) {
   var element = document.createElement(tag);
   this.appendChild(element);

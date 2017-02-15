@@ -12,7 +12,8 @@ var Config = {
 
   Board: {
     size: 15,
-    stroke: "RGBA(200, 200, 200, 0.8)"
+    stroke: "RGBA(200, 200, 200, 0.8)",
+    resultStyle: "RGBA(0, 255, 0, 0.5)" 
   },
 
   Selected: {
