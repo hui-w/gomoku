@@ -53,12 +53,8 @@ Rule.prototype = {
     }
   },
 
-  syncStatus: function(row, col, type) {
+  syncStatus: function(row, col) {
     this.results = [];
-
-    if (arguments.length === 0) {
-      return;
-    }
 
     // Left to right
     var result = this.getLine(row, col, 0, 1);

@@ -111,7 +111,7 @@ Chessboard.prototype = {
     }
 
     // Update the judge
-    this.rule.syncStatus();
+    this.rule.reset();
     this.requestRedraw();
   },
 
@@ -138,7 +138,7 @@ Chessboard.prototype = {
     this.syncToChessData(stone, stoneValue);
 
     // Check if game is over
-    this.rule.syncStatus(row, col, stoneValue);
+    this.rule.syncStatus(row, col);
 
     this.requestRedraw();
 
