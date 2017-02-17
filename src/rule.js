@@ -5,105 +5,91 @@
  */
 function Rule(chessBoard) {
   this.chessBoard = chessBoard;
-  this.result = null;
+  this.results = [];
 }
 
 Rule.prototype = {
-  syncStatus: function(row, col, value) {
-    this.result = null;
+  // Get the count of sequential stones
+  // By the direction of dRow and dCol
+  // Self is not included
+  getSideLength: function(row, col, dRow, dCol) {
+    var r = row;
+    var c = col;
+    var data = this.chessBoard.chessData;
+
+    var length = 0;
+    while (r + dRow >= 0 &&
+      c + dCol >= 0 &&
+      r + dRow < Config.Board.size &&
+      c + dCol < Config.Board.size &&
+      data[r + dRow][c + dCol] === data[r][c]
+    ) {
+      length++;
+      r += dRow;
+      c += dCol;
+    }
+
+    return length;
+  },
+
+  // Return the line if the sequential length is >= 5
+  // Otherwise return null
+  getLine: function(row, col, dRow, dCol) {
+    // Search along negative direction
+    var left = this.getSideLength(row, col, -dRow, -dCol);
+
+    // Search along positive direction
+    var right = this.getSideLength(row, col, dRow, dCol);
+
+    if (left + right >= 4) {
+      return [
+        row - dRow * left,
+        col - dCol * left,
+        row + dRow * right,
+        col + dCol * right
+      ];
+    } else {
+      return null;
+    }
+  },
+
+  syncStatus: function(row, col, type) {
+    this.results = [];
 
     if (arguments.length === 0) {
       return;
     }
 
-    // Find the result line
-    var data = this.chessBoard.chessData;
-
-    // Check horizontal line
-    var c1 = col;
-    while (c1 - 1 >= 0 && data[row][c1 - 1] === value) {
-      // Move left
-      c1--;
+    // Left to right
+    var result = this.getLine(row, col, 0, 1);
+    if (result) {
+      this.results.push(result);
     }
 
-    var c2 = col;
-    while (c2 + 1 < Config.Board.size && data[row][c2 + 1] === value) {
-      // Move right
-      c2++;
+    // Top to bottom
+    var result = this.getLine(row, col, 1, 0);
+    if (result) {
+      this.results.push(result);
     }
 
-    if (c2 - c1 >= 4) {
-      this.result = [row, c1, row, c2];
-      return;
+    // Left-top to right-bottom
+    var result = this.getLine(row, col, 1, 1);
+    if (result) {
+      this.results.push(result);
     }
 
-    // Check vertically line
-    var r1 = row;
-    while (r1 - 1 >= 0 && data[r1 - 1][col] === value) {
-      // Move top
-      r1--;
-    }
-
-    var r2 = row;
-    while (r2 + 1 < Config.Board.size && data[r2 + 1][col] === value) {
-      r2++;
-    }
-
-    if (r2 - r1 >= 4) {
-      this.result = [r1, col, r2, col];
-      return;
-    }
-
-    // Check cross line
-    r1 = row;
-    c1 = col;
-    while (r1 - 1 >= 0 && c1 - 1 >= 0 && data[r1 - 1][c1 - 1] === value) {
-      // Move left top
-      r1--;
-      c1--;
-    }
-
-    r2 = row;
-    c2 = col;
-    while (r2 + 1 < Config.Board.size && c2 + 1 < Config.Board.size && data[r2 + 1][c2 + 1] === value) {
-      // Move right bottom
-      r2++;
-      c2++;
-    }
-
-    if (r2 - r1 >= 4) {
-      this.result = [r1, c1, r2, c2];
-      return;
-    }
-
-    // Check counter cross line
-    r1 = row;
-    c1 = col;
-    while (r1 + 1 < Config.Board.size && c1 - 1 >= 0 && data[r1 + 1][c1 - 1] === value) {
-      // Move left bottom
-      r1++;
-      c1--;
-    }
-
-    r2 = row;
-    c2 = col;
-    while (r2 - 1 >= 0 && c2 + 1 < Config.Board.size && data[r2 - 1][c2 + 1] === value) {
-      // Move right top
-      r2--;
-      c2++;
-    }
-
-    if (c2 - c1 >= 4) {
-      this.result = [r1, c1, r2, c2];
-      return;
+    // Right-top to left-bottom
+    var result = this.getLine(row, col, 1, -1);
+    if (result) {
+      this.results.push(result);
     }
   },
 
   reset: function() {
-    this.result = null;
+    this.results = [];
   },
 
   isGameOver: function() {
-    return this.result !== null;
+    return this.results.length !== 0;
   }
 }

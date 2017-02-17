@@ -195,7 +195,7 @@ Chessboard.prototype = {
     this.renderChessboard(context);
     this.renderStones(context);
     this.renderHighlight(context);
-    this.renderResult(context);
+    this.renderResults(context);
     context.restore();
   },
 
@@ -282,17 +282,21 @@ Chessboard.prototype = {
     }
   },
 
-  renderResult: function(context) {
+  renderResults: function(context) {
     if (this.rule.isGameOver()) {
-      var result = this.rule.result;
-      var top1 = result[0] * this.unitSize + this.halfSize;
-      var left1 = result[1] * this.unitSize + this.halfSize;
-      var top2 = result[2] * this.unitSize + this.halfSize;
-      var left2 = result[3] * this.unitSize + this.halfSize;
       context.save();
       context.beginPath();
-      context.moveTo(left1, top1);
-      context.lineTo(left2, top2);
+      for (var i = 0; i < this.rule.results.length; i++) {
+        var result = this.rule.results[i];
+
+        var top1 = result[0] * this.unitSize + this.halfSize;
+        var left1 = result[1] * this.unitSize + this.halfSize;
+        var top2 = result[2] * this.unitSize + this.halfSize;
+        var left2 = result[3] * this.unitSize + this.halfSize;
+
+        context.moveTo(left1, top1);
+        context.lineTo(left2, top2);
+      }
 
       context.lineWidth = this.halfSize / 2;
       context.strokeStyle = Config.Board.resultStyle;
