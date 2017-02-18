@@ -37,39 +37,10 @@ UIManager.prototype = {
     }  
   },
 
-  dispatchEvent: function() {
-    var eventType = arguments[0];
-
+  dispatchEvent: function(eventType, left, top) {
     for (var i = 0; i < this.components.length; i++) {
       var component = this.components[i];
-      if (!component.isEnabled || !component.isVisible) {
-        // The component is disabled of hidden
-        continue;
-      }
-
-      switch (eventType) {
-        case 'capture':
-          var left = arguments[1];
-          var top = arguments[2];
-          if (typeof component.onCapture === 'function') {
-            component.onCapture(left, top);
-          }
-          break;
-        case 'drag':
-          var left = arguments[1];
-          var top = arguments[2];
-          if (typeof component.onDrag === 'function') {
-            component.onDrag(left, top);
-          }
-          break;
-        case 'release':
-          var left = arguments[1];
-          var top = arguments[2];
-          if (typeof component.onRelease === 'function') {
-            component.onRelease(left, top);
-          }
-          break;
-      }
+      component.handleEvent(eventType, left, top);
     }
   },
 

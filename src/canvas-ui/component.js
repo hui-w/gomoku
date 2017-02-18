@@ -71,6 +71,13 @@ Component.prototype = {
   // Event to update UI
   onRequestRedraw: null,
 
+  // Events handler
+  /* Comment these out, as they will be always null if being declared here as null
+  onCapture: null,
+  onDrag: null,
+  onRelease: null,
+  */
+
   setEnabled: function(isEnabled) {
     this.isEnabled = isEnabled;
     this.requestRedraw();
@@ -119,6 +126,31 @@ Component.prototype = {
       left <= this.left + this.width &&
       top >= this.top &&
       top <= this.top + this.height;
+  },
+
+  handleEvent: function(eventType, left, top) {
+    if (!this.isEnabled || !this.isVisible) {
+      // The component is disabled of hidden
+      return;
+    }
+
+    switch (eventType) {
+      case 'capture':
+        if (typeof this.onCapture === 'function') {
+          this.onCapture(left, top);
+        }
+        break;
+      case 'drag':
+        if (typeof this.onDrag === 'function') {
+          this.onDrag(left, top);
+        }
+        break;
+      case 'release':
+        if (typeof this.onRelease === 'function') {
+          this.onRelease(left, top);
+        }
+        break;
+    }
   },
 
   render: function(context) {

@@ -21,7 +21,7 @@ Home.prototype = {
   },
 
   renderMask: function(self, context) {
-    context.fillStyle = "RGBA(0, 0, 0, 0.5)";
-    context.fillRect(0, 0, self.width - 0, self.height - 0);
+    //context.fillStyle = "RGBA(0, 0, 0, 0.5)";
+    //context.fillRect(0, 0, self.width - 0, self.height - 0);
   }
 }

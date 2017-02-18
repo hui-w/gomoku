@@ -125,7 +125,7 @@ App.prototype = {
     this.width = document.documentElement.clientWidth;
     this.height = document.documentElement.clientHeight;
     this.render();
-    this.showHome(true);
+    //this.showHome(true);
   },
 
   render: function() {
