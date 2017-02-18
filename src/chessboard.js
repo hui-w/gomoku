@@ -3,14 +3,14 @@
  * @repo https://github.com/hui-w/gomoku
  * @licence MIT 
  */
-function Chessboard() {
-  this.left = 0;
-  this.top = 0;
-  this.size = 0;
+function Chessboard(left, top) {
+  // Inherits all members from base class
+  Component(this, left, top);
+
+  // Initialize
+  this.type = 'chassboard';
 
   // Caculated values
-  this.width = 0;
-  this.height = 0;
   this.unitSize = 0;
   this.halfSize = 0;
 
@@ -31,14 +31,171 @@ function Chessboard() {
   this.dragOffset = null; // {left, top}
   this.selectedCell = null; // {row, col}
 
-  // The event to redraw
-  this.onRequestRedraw = null;
-
   // Init the chess data array
   this.syncToChessData();
+
+  this.init();
 }
 
 Chessboard.prototype = {
+  init: function() {
+    this.renderExtra.push(this.renderChessboard);
+    this.renderExtra.push(this.renderStones);
+    this.renderExtra.push(this.renderHighlight);
+    this.renderExtra.push(this.renderResults);
+  },
+
+  renderChessboard: function(self, context) {
+    // The rectangle of the visiable chess board
+    var rect = {
+      left: self.halfSize,
+      top: self.halfSize,
+      right: self.width - self.halfSize,
+      bottom: self.height - self.halfSize
+    };
+
+    context.beginPath();
+    for (var i = 0; i < Config.Board.size; i++) {
+      // Horizontal line
+      context.antiFuzzyLine(
+        rect.left,
+        rect.top + self.unitSize * i,
+        rect.right,
+        rect.top + self.unitSize * i
+      );
+
+      // Vertical line
+      context.antiFuzzyLine(
+        rect.left + self.unitSize * i,
+        rect.top,
+        rect.left + self.unitSize * i,
+        rect.bottom
+      );
+    }
+
+    context.lineWidth = 1;
+    context.strokeStyle = Config.Board.stroke;
+    context.stroke();
+  },
+
+  renderStones: function(self, context) {
+    for (var i = 0; i < self.stones.length; i++) {
+      var row = self.stones[i].row;
+      var col = self.stones[i].col;
+
+      var left = col * self.unitSize;
+      var top = row * self.unitSize;
+
+      context.drawStone(i % 2 == 0, left, top, self.halfSize);
+    }
+  },
+
+  renderHighlight: function(self, context) {
+    if (self.selectedCell) {
+      var left = self.selectedCell.col * self.unitSize;
+      var top = self.selectedCell.row * self.unitSize;
+      var right = left + self.unitSize;
+      var bottom = top + self.unitSize;
+      var length = Math.floor(self.unitSize / 4);
+
+      context.save();
+      context.beginPath();
+
+      // Left top
+      context.moveTo(left, top + length);
+      context.lineTo(left, top);
+      context.lineTo(left + length, top);
+
+      // Right top
+      context.moveTo(right - length, top);
+      context.lineTo(right, top);
+      context.lineTo(right, top + length);
+
+      // Right bottom
+      context.moveTo(right, bottom - length);
+      context.lineTo(right, bottom);
+      context.lineTo(right - length, bottom);
+
+      // Left bottom
+      context.moveTo(left + length, bottom);
+      context.lineTo(left, bottom);
+      context.lineTo(left, bottom - length);
+
+      context.lineWidth = 2;
+      context.strokeStyle = Config.Selected.stroke;
+      context.stroke();
+      context.restore();
+    }
+  },
+
+  renderResults: function(self, context) {
+    if (self.rule.isGameOver()) {
+      context.save();
+      context.beginPath();
+      for (var i = 0; i < self.rule.results.length; i++) {
+        var result = self.rule.results[i];
+
+        var top1 = result[0] * self.unitSize + self.halfSize;
+        var left1 = result[1] * self.unitSize + self.halfSize;
+        var top2 = result[2] * self.unitSize + self.halfSize;
+        var left2 = result[3] * self.unitSize + self.halfSize;
+
+        context.moveTo(left1, top1);
+        context.lineTo(left2, top2);
+      }
+
+      context.lineWidth = self.halfSize / 2;
+      context.strokeStyle = Config.Board.resultStyle;
+      context.stroke();
+      context.restore();
+    }
+  },
+
+  onCapture: function(left, top) {
+    this.capturedPos = { left: left, top: top };
+
+    // Select the current cell
+    this.setSelectedCell(left, top);
+  },
+
+  onDrag: function(left, top) {
+    if (!this.capturedPos) {
+      // Mouse not down
+      return;
+    }
+
+    if (!this.dragOffset) {
+      // Before can be dragged
+      var distance = Math.pow(left - this.capturedPos.left, 2) + Math.pow(top - this.capturedPos.top, 2);
+      if (distance >= Math.pow(Config.Selected.dragSensitive * this.unitSize, 2)) {
+        this.dragOffset = {
+          left: left - this.capturedPos.left,
+          top: top - this.capturedPos.top
+        }
+      }
+    } else {
+      // Drag the selected cell
+      this.setSelectedCell(left - this.dragOffset.left, top - this.dragOffset.top);
+    }
+  },
+
+  onRelease: function(left, top) {
+    this.capturedPos = null;
+    this.dragOffset = null;
+
+    // Put a stone
+    if (this.selectedCell && !this.hasStone(this.selectedCell.row, this.selectedCell.col)) {
+      this.putStone(this.selectedCell.row, this.selectedCell.col);
+    }
+  },
+
+  setBoardSize: function(size) {
+    this.unitSize = Math.floor(size / Config.Board.size);
+    this.halfSize = Math.floor(size / Config.Board.size / 2);
+    this.width = this.unitSize * Config.Board.size - 1;
+    this.height = this.unitSize * Config.Board.size - 1;
+  },
+
   // Sync stones array to the rectangular array
   // newVal: 0 - empty; 1 - black; 2 - white
   syncToChessData: function(stone, newVal) {
@@ -180,169 +337,6 @@ Chessboard.prototype = {
     }
   },
 
-  setPaintingArea: function(left, top, size) {
-    this.left = left;
-    this.top = top;
-    this.unitSize = Math.floor(size / Config.Board.size);
-    this.halfSize = Math.floor(size / Config.Board.size / 2);
-    this.width = this.unitSize * Config.Board.size - 1;
-    this.height = this.unitSize * Config.Board.size - 1;
-  },
-
-  render: function(context) {
-    context.save();
-    context.translate(this.left, this.top);
-    this.renderChessboard(context);
-    this.renderStones(context);
-    this.renderHighlight(context);
-    this.renderResults(context);
-    context.restore();
-  },
-
-  renderChessboard: function(context) {
-    // The rectangle of the visiable chess board
-    var rect = {
-      left: this.halfSize,
-      top: this.halfSize,
-      right: this.width - this.halfSize,
-      bottom: this.height - this.halfSize
-    };
-
-    context.beginPath();
-    for (var i = 0; i < Config.Board.size; i++) {
-      // Horizontal line
-      context.antiFuzzyLine(
-        rect.left,
-        rect.top + this.unitSize * i,
-        rect.right,
-        rect.top + this.unitSize * i
-      );
-
-      // Vertical line
-      context.antiFuzzyLine(
-        rect.left + this.unitSize * i,
-        rect.top,
-        rect.left + this.unitSize * i,
-        rect.bottom
-      );
-    }
-
-    context.lineWidth = 1;
-    context.strokeStyle = Config.Board.stroke;
-    context.stroke();
-  },
-
-  renderStones: function(context) {
-    for (var i = 0; i < this.stones.length; i++) {
-      var row = this.stones[i].row;
-      var col = this.stones[i].col;
-
-      var left = col * this.unitSize;
-      var top = row * this.unitSize;
-
-      context.drawStone(i % 2 == 0, left, top, this.halfSize);
-    }
-  },
-
-  renderHighlight: function(context) {
-    if (this.selectedCell) {
-      var left = this.selectedCell.col * this.unitSize;
-      var top = this.selectedCell.row * this.unitSize;
-      var right = left + this.unitSize;
-      var bottom = top + this.unitSize;
-      var length = Math.floor(this.unitSize / 4);
-
-      context.save();
-      context.beginPath();
-
-      // Left top
-      context.moveTo(left, top + length);
-      context.lineTo(left, top);
-      context.lineTo(left + length, top);
-
-      // Right top
-      context.moveTo(right - length, top);
-      context.lineTo(right, top);
-      context.lineTo(right, top + length);
-
-      // Right bottom
-      context.moveTo(right, bottom - length);
-      context.lineTo(right, bottom);
-      context.lineTo(right - length, bottom);
-
-      // Left bottom
-      context.moveTo(left + length, bottom);
-      context.lineTo(left, bottom);
-      context.lineTo(left, bottom - length);
-
-      context.lineWidth = 2;
-      context.strokeStyle = Config.Selected.stroke;
-      context.stroke();
-      context.restore();
-    }
-  },
-
-  renderResults: function(context) {
-    if (this.rule.isGameOver()) {
-      context.save();
-      context.beginPath();
-      for (var i = 0; i < this.rule.results.length; i++) {
-        var result = this.rule.results[i];
-
-        var top1 = result[0] * this.unitSize + this.halfSize;
-        var left1 = result[1] * this.unitSize + this.halfSize;
-        var top2 = result[2] * this.unitSize + this.halfSize;
-        var left2 = result[3] * this.unitSize + this.halfSize;
-
-        context.moveTo(left1, top1);
-        context.lineTo(left2, top2);
-      }
-
-      context.lineWidth = this.halfSize / 2;
-      context.strokeStyle = Config.Board.resultStyle;
-      context.stroke();
-      context.restore();
-    }
-  },
-
-  onCapture: function(left, top) {
-    this.capturedPos = { left: left, top: top };
-
-    // Select the current cell
-    this.setSelectedCell(left, top);
-  },
-
-  onDrag: function(left, top) {
-    if (!this.capturedPos) {
-      // Mouse not down
-      return;
-    }
-
-    if (!this.dragOffset) {
-      // Before can be dragged
-      var distance = Math.pow(left - this.capturedPos.left, 2) + Math.pow(top - this.capturedPos.top, 2);
-      if (distance >= Math.pow(Config.Selected.dragSensitive * this.unitSize, 2)) {
-        this.dragOffset = {
-          left: left - this.capturedPos.left,
-          top: top - this.capturedPos.top
-        }
-      }
-    } else {
-      // Drag the selected cell
-      this.setSelectedCell(left - this.dragOffset.left, top - this.dragOffset.top);
-    }
-  },
-
-  onRelease: function(left, top) {
-    this.capturedPos = null;
-    this.dragOffset = null;
-
-    // Put a stone
-    if (this.selectedCell && !this.hasStone(this.selectedCell.row, this.selectedCell.col)) {
-      this.putStone(this.selectedCell.row, this.selectedCell.col);
-    }
-  },
-
   setSelectedCell: function(left, top) {
     var oldRow = this.selectedCell ? this.selectedCell.row : null;
     var oldCol = this.selectedCell ? this.selectedCell.col : null;
@@ -377,11 +371,5 @@ Chessboard.prototype = {
     }
 
     return false;
-  },
-
-  requestRedraw: function() {
-    if (typeof this.onRequestRedraw == 'function') {
-      this.onRequestRedraw();
-    }
   }
 }

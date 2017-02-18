@@ -29,10 +29,18 @@ function Component(child, left, top, width, height) {
   }
 
   // Init the component
-  child.left = left;
-  child.top = top;
-  child.width = width;
-  child.height = height;
+  if (left != undefined) {
+    child.left = left;
+  }
+  if (top != undefined) {
+    child.top = top;
+  }
+  if (width != undefined) {
+    child.width = width;
+  }
+  if (height != undefined) {
+    child.height = height;
+  }
 }
 
 Component.prototype = {

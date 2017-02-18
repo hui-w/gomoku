@@ -9,13 +9,12 @@ function App() {
   // Properties
   this.width = 0;
   this.height = 0;
-  this.cellSize = 0;
 
   this.canvas = null;
   this.context = null;
 
   // Child components
-  this.chessboard = new Chessboard();
+  this.chessboard = new Chessboard(Config.Canvas.padding, Config.Canvas.padding);
 
   var btnSize = Config.Button.size;
 
@@ -194,11 +193,7 @@ App.prototype = {
     }
 
     // Update the chessboard
-    this.chessboard.setPaintingArea(
-      Config.Canvas.padding,
-      Config.Canvas.padding,
-      boardSize
-    );
+    this.chessboard.setBoardSize(boardSize);
 
     // Update the buttons
     var buttonCount = 4;
