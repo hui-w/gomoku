@@ -2,6 +2,9 @@
  * @author Wang, Hui (huiwang@qlike.com) 
  * @repo https://github.com/hui-w/gomoku
  * @licence MIT 
+ *
+ * The chess board of the game
+ * It's derived from Component
  */
 function Chessboard(left, top) {
   // Inherits all members from base class
@@ -272,7 +275,7 @@ Chessboard.prototype = {
     this.requestRedraw();
   },
 
-  isBlack: function() {
+  isBlackPlaying: function() {
     return this.stones.length % 2 === 0;
   },
 
@@ -291,7 +294,7 @@ Chessboard.prototype = {
     this.selectedCell = stone;
     this.stones.push(stone);
 
-    var stoneValue = this.isBlack() ? 2 : 1; // The value before this stone was put
+    var stoneValue = this.isBlackPlaying() ? 2 : 1; // The value before this stone was put
     this.syncToChessData(stone, stoneValue);
 
     // Check if game is over
@@ -308,8 +311,8 @@ Chessboard.prototype = {
   },
 
   robotPlay: function() {
-    if ((!this.robotConfig.black && this.isBlack()) ||
-      (!this.robotConfig.white && !this.isBlack())
+    if ((!this.robotConfig.black && this.isBlackPlaying()) ||
+      (!this.robotConfig.white && !this.isBlackPlaying())
     ) {
       return;
     }

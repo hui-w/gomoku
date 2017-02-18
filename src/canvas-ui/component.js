@@ -101,6 +101,13 @@ Component.prototype = {
     }
   },
 
+  isPointInside: function(left, top) {
+    return left >= this.left &&
+      left <= this.left + this.width &&
+      top >= this.top &&
+      top <= this.top + this.height;
+  },
+
   render: function(context) {
     context.save();
     context.translate(this.left, this.top);

@@ -264,7 +264,7 @@ App.prototype = {
 
     // Get the component status before redraw
     this.playerIndicator.renderExtra = function(self, context) {
-      context.drawStone(that.chessboard.isBlack(), 0, 0, Math.floor(self.width / 2));
+      context.drawStone(that.chessboard.isBlackPlaying(), 0, 0, Math.floor(self.width / 2));
     }
     this.btnBotBlack.setOn(this.chessboard.robotConfig.black);
     this.btnBotWhite.setOn(this.chessboard.robotConfig.white);

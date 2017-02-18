@@ -53,13 +53,6 @@ Button.prototype = {
     this.requestRedraw();
   },
 
-  isPointInside: function(left, top) {
-    return left >= this.left &&
-      left <= this.left + this.width &&
-      top >= this.top &&
-      top <= this.top + this.height;
-  },
-
   onCapture: function(left, top) {
     if (!this.isPointInside(left, top)) {
       return;
