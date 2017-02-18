@@ -14,6 +14,7 @@ function App() {
   this.context = null;
 
   // Child components
+  this.home = new Home(Config.Canvas.padding, Config.Canvas.padding);
   this.chessboard = new Chessboard(Config.Canvas.padding, Config.Canvas.padding);
 
   var btnSize = Config.Button.size;
@@ -112,6 +113,7 @@ function App() {
   this.uiManager.registerComponent(this.lblNew);
   this.uiManager.registerComponent(this.lblBack);
   this.uiManager.registerComponent(this.lblRobot);
+  this.uiManager.registerComponent(this.home);
 
   // Initialize
   this.init();
@@ -123,6 +125,7 @@ App.prototype = {
     this.width = document.documentElement.clientWidth;
     this.height = document.documentElement.clientHeight;
     this.render();
+    this.showHome(true);
   },
 
   render: function() {
@@ -194,6 +197,10 @@ App.prototype = {
 
     // Update the chessboard
     this.chessboard.setBoardSize(boardSize);
+    this.home.setSize(
+      this.canvas.width - Config.Canvas.padding * 2,
+      this.canvas.height - Config.Canvas.padding * 2
+    );
 
     // Update the buttons
     var buttonCount = 4;
@@ -279,6 +286,11 @@ App.prototype = {
     this.uiManager.redrawComponents(this.context);
 
     console.log("- canvas redraw")
+  },
+
+  showHome: function(show) {
+    this.home.setVisible(show);
+    this.uiManager.enableAll(!show);
   },
 
   /* Mouse events */

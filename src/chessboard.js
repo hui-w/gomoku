@@ -133,7 +133,6 @@ Chessboard.prototype = {
 
   renderResults: function(self, context) {
     if (self.rule.isGameOver()) {
-      context.save();
       context.beginPath();
       for (var i = 0; i < self.rule.results.length; i++) {
         var result = self.rule.results[i];
@@ -150,7 +149,6 @@ Chessboard.prototype = {
       context.lineWidth = self.halfSize / 2;
       context.strokeStyle = Config.Board.resultStyle;
       context.stroke();
-      context.restore();
     }
   },
 

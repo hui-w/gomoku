@@ -51,6 +51,9 @@ Component.prototype = {
   width: 0,
   height: 0,
 
+  isEnabled: true,
+  isVisible: true,
+
   // Look and feel
   fillStyle: null,
   strokeStyle: null,
@@ -67,6 +70,16 @@ Component.prototype = {
 
   // Event to update UI
   onRequestRedraw: null,
+
+  setEnabled: function(isEnabled) {
+    this.isEnabled = isEnabled;
+    this.requestRedraw();
+  },
+
+  setVisible: function(isVisible) {
+    this.isVisible = isVisible;
+    this.requestRedraw();
+  },
 
   setPosition: function(left, top) {
     this.left = left;

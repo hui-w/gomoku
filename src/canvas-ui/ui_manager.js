@@ -31,11 +31,21 @@ UIManager.prototype = {
     }
   },
 
+  enableAll: function(enabled) {
+    for (var i = 0; i < this.components.length; i++) {
+      this.components[i].setEnabled(enabled);
+    }  
+  },
+
   dispatchEvent: function() {
     var eventType = arguments[0];
 
     for (var i = 0; i < this.components.length; i++) {
       var component = this.components[i];
+      if (!component.isEnabled || !component.isVisible) {
+        // The component is disabled of hidden
+        continue;
+      }
 
       switch (eventType) {
         case 'capture':
@@ -48,14 +58,14 @@ UIManager.prototype = {
         case 'drag':
           var left = arguments[1];
           var top = arguments[2];
-          if (typeof component.onCapture === 'function') {
+          if (typeof component.onDrag === 'function') {
             component.onDrag(left, top);
           }
           break;
         case 'release':
           var left = arguments[1];
           var top = arguments[2];
-          if (typeof component.onCapture === 'function') {
+          if (typeof component.onRelease === 'function') {
             component.onRelease(left, top);
           }
           break;
