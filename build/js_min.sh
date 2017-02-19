@@ -11,6 +11,7 @@ cat \
 ../src/canvas-ui/button.js \
 ../src/canvas-ui/component.js \
 ../src/canvas-ui/label.js \
+../src/canvas-ui/polyfill.js \
 ../src/canvas-ui/panel.js \
 ../src/canvas-ui/ui_manager.js \
 ../src/app.js \

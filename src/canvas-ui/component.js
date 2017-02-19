@@ -68,6 +68,12 @@ Component.prototype = {
    */
   renderExtra: [],
 
+  /*
+   * Parent and child components
+   */
+  parent: null,
+  children: [],
+
   // Event to update UI
   onRequestRedraw: null,
 
@@ -79,48 +85,104 @@ Component.prototype = {
   */
 
   setEnabled: function(isEnabled) {
+    if (this.isEnabled === isEnabled) {
+      return;
+    }
+
     this.isEnabled = isEnabled;
     this.requestRedraw();
+
+    // Update children
+    this.children.forEach(function(child) {
+      child.setEnabled(isEnabled);
+    });
   },
 
   setVisible: function(isVisible) {
+    if (this.isVisible === isVisible) {
+      return;
+    }
+
     this.isVisible = isVisible;
     this.requestRedraw();
+
+    // Update children
+    this.children.forEach(function(child) {
+      child.setVisible(isVisible);
+    });
   },
 
   setPosition: function(left, top) {
+    if (this.left === left && this.top === top) {
+      return;
+    }
+
     this.left = left;
     this.top = top;
     this.requestRedraw();
+
+    // Update children
+    this.children.forEach(function(child) {
+      child.requestRedraw();
+    });
   },
 
   setSize: function(width, height) {
+    if (this.width === width && this.height === height) {
+      return;
+    }
+
     this.width = width;
     this.height = height;
     this.requestRedraw();
   },
 
-  setStrokeStyle: function(style) {
-    this.strokeStyle = style;
+  setStrokeStyle: function(strokeStyle) {
+    if (this.strokeStyle === strokeStyle) {
+      return;
+    }
+
+    this.strokeStyle = strokeStyle;
     this.requestRedraw();
   },
 
-  setLineWidth: function(width) {
-    this.lineWidth = width;
+  setLineWidth: function(lineWidth) {
+    if (this.lineWidth === lineWidth) {
+      return;
+    }
+
+    this.lineWidth = lineWidth;
     this.requestRedraw();
   },
 
-  setFillStyle: function(style) {
-    this.fillStyle = style;
+  setFillStyle: function(fillStyle) {
+    if (this.fillStyle === fillStyle) {
+      return;
+    }
+
+    this.fillStyle = fillStyle;
     this.requestRedraw();
   },
 
+  // Add a child component
+  addChild: function(child) {
+    this.children.push(child);
+    child.bindParent(this);
+  },
+
+  // Set the parent of current component
+  bindParent: function(parent) {
+    this.parent = parent;
+  },
+
+  // Request redraw
   requestRedraw: function() {
     if (typeof this.onRequestRedraw == 'function') {
       this.onRequestRedraw();
     }
   },
 
+  // Check if the point is inside the component rectangle
   isPointInside: function(left, top) {
     return left >= this.left &&
       left <= this.left + this.width &&
@@ -151,11 +213,26 @@ Component.prototype = {
         }
         break;
     }
+
+    // Propagate to children
+    this.children.forEach(function(child) {
+      child.handleEvent(eventType, left, top);
+    })
   },
 
   render: function(context) {
     context.save();
-    context.translate(this.left, this.top);
+    var left = this.left;
+    var top = this.top;
+    var parent = this.parent;
+
+    // Get the left and top of all parents
+    while (parent != null) {
+      left += parent.left;
+      top += parent.top;
+      parent = parent.parent;
+    }
+    context.translate(left, top);
 
     // Background
     if (this.fillStyle) {
@@ -183,5 +260,10 @@ Component.prototype = {
     }
 
     context.restore();
+
+    // Render all children
+    this.children.forEach(function(child) {
+      child.render(context);
+    });
   }
 }
