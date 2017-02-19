@@ -26,11 +26,13 @@ function Label(left, top, text) {
 
 Label.prototype = {
   init: function() {
+    /*
     this.renderExtra.push(function(self, context) {
       context.fillStyle = self.font.color;
       context.font = self.font.size + "px " + self.font.face;
       context.fillTextEx(self.text, 0, 0, self.horizontalAlign, self.verticalAlign);
     });
+    */
   },
 
   setHorizontalAlign: function(value) {

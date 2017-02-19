@@ -58,6 +58,12 @@ Component.prototype = {
   fillStyle: null,
   strokeStyle: null,
   lineWidth: 0,
+  text: null,
+  font: {
+    size: 12,
+    face: "Arial, Helvetica, sans-serif",
+    color: "#000000"
+  },
 
   /* Method to render the extra content
    * Example:
@@ -134,6 +140,15 @@ Component.prototype = {
 
     this.width = width;
     this.height = height;
+    this.requestRedraw();
+  },
+
+  setText: function(text) {
+    if (this.text === text) {
+      return;
+    }
+
+    this.text = text;
     this.requestRedraw();
   },
 
@@ -245,6 +260,13 @@ Component.prototype = {
       context.lineWidth = this.lineWidth;
       context.strokeStyle = this.strokeStyle;
       context.strokeRect(0, 0, this.width, this.height);
+    }
+
+    // Text
+    if (this.text) {
+      context.fillStyle = this.font.color;
+      context.font = this.font.size + "px " + this.font.face;
+      context.fillTextEx(this.text, this.width / 2, this.height / 2, 'center', 'middle');
     }
 
     // Render customized content
