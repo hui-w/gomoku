@@ -3,14 +3,20 @@
  * @repo https://github.com/hui-w/gomoku
  * @licence MIT 
  */
-function Button(left, top, width, height) {
+function Button(left, top, width, height, id) {
   // Inherits all members from base class
-  Component(this, left, top, width, height);
+  Component(this, left, top, width, height, id);
 
   // Initialize
   this.type = 'button';
 
   this.isOn = false;
+  this.text = null;
+  this.font = {
+    size: 12,
+    face: "Arial, Helvetica, sans-serif",
+    color: "#000000"
+  };
 
   // The position where mouse was down
   this.capturedPosition = null;
@@ -23,7 +29,12 @@ function Button(left, top, width, height) {
 
 Button.prototype = {
   init: function() {
+    // Render the button border and background
     this.renderExtra.push(function(self, context) {
+      console.log(self);
+      if (self.id === 'button1') {
+        console.log(self.capturedPosition);
+      }
       context.beginPath();
       context.moveTo(0, 0);
       context.lineTo(self.width, 0);
@@ -42,14 +53,33 @@ Button.prototype = {
       context.fill();
       context.stroke();
     });
+
+    // Render the text
+    this.renderExtra.push(function(self, context) {
+      // Text
+      if (self.text) {
+        context.fillStyle = self.font.color;
+        context.font = self.font.size + "px " + self.font.face;
+        context.fillTextEx(self.text, self.width / 2, self.height / 2, 'center', 'middle');
+      }
+    });
   },
 
   setOn: function(isOn) {
     if (this.isOn === isOn) {
       return;
     }
-    
+
     this.isOn = isOn;
+    this.requestRedraw();
+  },
+
+  setText: function(text) {
+    if (this.text === text) {
+      return;
+    }
+
+    this.text = text;
     this.requestRedraw();
   },
 

@@ -26,30 +26,28 @@ function Label(left, top, text) {
 
 Label.prototype = {
   init: function() {
-    /*
     this.renderExtra.push(function(self, context) {
       context.fillStyle = self.font.color;
       context.font = self.font.size + "px " + self.font.face;
       context.fillTextEx(self.text, 0, 0, self.horizontalAlign, self.verticalAlign);
     });
-    */
   },
 
-  setHorizontalAlign: function(value) {
-    if (value === this.horizontalAlign) {
+  setHorizontalAlign: function(horizontalAlign) {
+    if (horizontalAlign === this.horizontalAlign) {
       return;
     }
 
-    this.horizontalAlign = value;
+    this.horizontalAlign = horizontalAlign;
     this.requestRedraw();
   },
 
-  setVerticalAlign: function(value) {
-    if (value === this.verticalAlign) {
+  setVerticalAlign: function(verticalAlign) {
+    if (verticalAlign === this.verticalAlign) {
       return;
     }
 
-    this.verticalAlign = value;
+    this.verticalAlign = verticalAlign;
     this.requestRedraw();
   },
 

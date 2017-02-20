@@ -125,7 +125,7 @@ App.prototype = {
     this.width = document.documentElement.clientWidth;
     this.height = document.documentElement.clientHeight;
     this.render();
-    //this.showHome(true);
+    this.showHome(true);
   },
 
   render: function() {
@@ -204,6 +204,7 @@ App.prototype = {
 
     // Update the buttons
     var buttonCount = 4;
+    var labelMargin = 2;
     var buttonLengthAll = Config.Button.size * buttonCount + Config.Button.margin * (buttonCount - 1);
     if (this.canvas.width > this.canvas.height) {
       // Buttons on the right side
@@ -211,21 +212,21 @@ App.prototype = {
       var top = Math.floor((this.canvas.height - buttonLengthAll) / 2);
 
       // Player indicator
-      this.lblCurrent.setPosition(left + Config.Button.size / 2, top - 2);
+      this.lblCurrent.setPosition(left + Config.Button.size / 2, top - labelMargin);
       this.playerIndicator.setPosition(left, top);
 
       // Buttons
       top += Config.Button.size + Config.Button.margin;
-      this.lblNew.setPosition(left + Config.Button.size / 2, top - 2);
+      this.lblNew.setPosition(left + Config.Button.size / 2, top - labelMargin);
       this.btnNew.setPosition(left, top);
 
       top += Config.Button.size + Config.Button.margin;
-      this.lblBack.setPosition(left + Config.Button.size / 2, top - 2);
+      this.lblBack.setPosition(left + Config.Button.size / 2, top - labelMargin);
       this.btnBack.setPosition(left, top);
 
       // Robots label and buttons
       top += Config.Button.size + Config.Button.margin;
-      this.lblRobot.setPosition(left + Config.Button.size / 2, top - 2); 
+      this.lblRobot.setPosition(left + Config.Button.size / 2, top - labelMargin); 
       this.btnBotBlack.setPosition(left, top);
 
       top += Config.Button.size / 2;
@@ -236,21 +237,21 @@ App.prototype = {
       var top = Config.Canvas.padding + boardSize + Config.Button.margin;
 
       // Player indicator
-      this.lblCurrent.setPosition(left + Config.Button.size / 2, top - 2);
+      this.lblCurrent.setPosition(left + Config.Button.size / 2, top - labelMargin);
       this.playerIndicator.setPosition(left, top);
 
       // Buttons
       left += Config.Button.size + Config.Button.margin;
-      this.lblNew.setPosition(left + Config.Button.size / 2, top - 2);
+      this.lblNew.setPosition(left + Config.Button.size / 2, top - labelMargin);
       this.btnNew.setPosition(left, top);
 
       left += Config.Button.size + Config.Button.margin;
-      this.lblBack.setPosition(left + Config.Button.size / 2, top - 2);
+      this.lblBack.setPosition(left + Config.Button.size / 2, top - labelMargin);
       this.btnBack.setPosition(left, top);
 
       // Robots label and buttons
       left += Config.Button.size + Config.Button.margin;
-      this.lblRobot.setPosition(left + Config.Button.size / 2, top - 2); 
+      this.lblRobot.setPosition(left + Config.Button.size / 2, top - labelMargin); 
       this.btnBotBlack.setPosition(left, top);
 
       top += Config.Button.size / 2;
@@ -290,7 +291,7 @@ App.prototype = {
 
   showHome: function(show) {
     this.home.setVisible(show);
-    this.uiManager.enableAll(!show);
+    this.chessboard.setEnabled(!show);
   },
 
   /* Mouse events */

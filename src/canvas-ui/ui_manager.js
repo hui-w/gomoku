@@ -16,9 +16,9 @@ UIManager.prototype = {
 
   registerComponent: function(component) {
     var that = this;
-    component.onRequestRedraw = function() {
+    component.setRedrawHandler(function() {
       that.requestRedraw();
-    };
+    });
 
     this.components.push(component);
   },
@@ -31,11 +31,13 @@ UIManager.prototype = {
     }
   },
 
+  /*
   enableAll: function(enabled) {
     for (var i = 0; i < this.components.length; i++) {
       this.components[i].setEnabled(enabled);
     }  
   },
+  */
 
   dispatchEvent: function(eventType, left, top) {
     for (var i = 0; i < this.components.length; i++) {

@@ -5,7 +5,7 @@
  *
  * Base class for canvas components
  */
-function Component(child, left, top, width, height) {
+function Component(child, left, top, width, height, id) {
   /*
   // Copy the prototype
   for (key in Component.prototype) {
@@ -41,11 +41,15 @@ function Component(child, left, top, width, height) {
   if (height != undefined) {
     child.height = height;
   }
+  if (id != undefined) {
+    child.id = id;
+  }
 }
 
 Component.prototype = {
   // Position and size
   type: null,
+  id: null,
   left: 0,
   top: 0,
   width: 0,
@@ -58,12 +62,6 @@ Component.prototype = {
   fillStyle: null,
   strokeStyle: null,
   lineWidth: 0,
-  text: null,
-  font: {
-    size: 12,
-    face: "Arial, Helvetica, sans-serif",
-    color: "#000000"
-  },
 
   /* Method to render the extra content
    * Example:
@@ -133,6 +131,15 @@ Component.prototype = {
     });
   },
 
+  setRedrawHandler: function(handler) {
+    this.onRequestRedraw = handler;
+
+    // Update children
+    this.children.forEach(function(child) {
+      child.setRedrawHandler(handler);
+    });
+  },
+
   setSize: function(width, height) {
     if (this.width === width && this.height === height) {
       return;
@@ -140,15 +147,6 @@ Component.prototype = {
 
     this.width = width;
     this.height = height;
-    this.requestRedraw();
-  },
-
-  setText: function(text) {
-    if (this.text === text) {
-      return;
-    }
-
-    this.text = text;
     this.requestRedraw();
   },
 
@@ -197,12 +195,29 @@ Component.prototype = {
     }
   },
 
+  // Get absolute position on the canvas
+  getAbsPostion: function() {
+    var left = this.left;
+    var top = this.top;
+    var parent = this.parent;
+
+    // Get the left and top of all parents
+    while (parent != null) {
+      left += parent.left;
+      top += parent.top;
+      parent = parent.parent;
+    }
+
+    return { left: left, top, top };
+  },
+
   // Check if the point is inside the component rectangle
   isPointInside: function(left, top) {
-    return left >= this.left &&
-      left <= this.left + this.width &&
-      top >= this.top &&
-      top <= this.top + this.height;
+    var position = this.getAbsPostion();
+    return left >= position.left &&
+      left <= position.left + this.width &&
+      top >= position.top &&
+      top <= position.top + this.height;
   },
 
   handleEvent: function(eventType, left, top) {
@@ -237,17 +252,10 @@ Component.prototype = {
 
   render: function(context) {
     context.save();
-    var left = this.left;
-    var top = this.top;
-    var parent = this.parent;
 
-    // Get the left and top of all parents
-    while (parent != null) {
-      left += parent.left;
-      top += parent.top;
-      parent = parent.parent;
-    }
-    context.translate(left, top);
+    // Get the absolute left and top
+    var position = this.getAbsPostion();
+    context.translate(position.left, position.top);
 
     // Background
     if (this.fillStyle) {
@@ -260,13 +268,6 @@ Component.prototype = {
       context.lineWidth = this.lineWidth;
       context.strokeStyle = this.strokeStyle;
       context.strokeRect(0, 0, this.width, this.height);
-    }
-
-    // Text
-    if (this.text) {
-      context.fillStyle = this.font.color;
-      context.font = this.font.size + "px " + this.font.face;
-      context.fillTextEx(this.text, this.width / 2, this.height / 2, 'center', 'middle');
     }
 
     // Render customized content
