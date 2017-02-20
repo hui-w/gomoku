@@ -31,10 +31,6 @@ Button.prototype = {
   init: function() {
     // Render the button border and background
     this.renderExtra.push(function(self, context) {
-      console.log(self);
-      if (self.id === 'button1') {
-        console.log(self.capturedPosition);
-      }
       context.beginPath();
       context.moveTo(0, 0);
       context.lineTo(self.width, 0);
