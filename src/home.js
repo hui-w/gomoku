@@ -17,7 +17,7 @@ function Home(left, top) {
 
 Home.prototype = {
   init: function() {
-    this.renderExtra.push(this.renderMask);
+    this.onRenderExtra.push(this.renderMask);
 
     var btn1 = new Button(100, 50, 150, 32, 'button1');
     btn1.setText('Human vs. Human');
@@ -41,8 +41,8 @@ Home.prototype = {
     this.addChild(btn3);
   },
 
-  renderMask: function(self, context) {
+  renderMask: function(context) {
     context.fillStyle = "RGBA(0, 0, 0, 0.5)";
-    context.fillRect(0, 0, self.width - 0, self.height - 0);
+    context.fillRect(0, 0, this.width - 0, this.height - 0);
   }
 }

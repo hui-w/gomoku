@@ -65,12 +65,18 @@ Component.prototype = {
 
   /* Method to render the extra content
    * Example:
-   *  panel.renderExtra.push(function(self, context) {
+   *  panel.onRenderExtra.push(function(context) {
    *    context.fillStyle = "RGBA(255, 0, 0, 0.5)";
-   *    context.fillRect(0, 0, self.width, self.height);
+   *    context.fillRect(0, 0, this.width, this.height);
    *  });
    */
-  renderExtra: [],
+  onRenderExtra: [],
+
+  /*
+   * Events
+   */
+  onSizeChanged: [],
+  onPositionChanged: [],
 
   /*
    * Parent and child components
@@ -125,8 +131,12 @@ Component.prototype = {
     this.top = top;
     this.requestRedraw();
 
+    // Callbacks
+    this.triggerCallbacks(this.onPositionChanged, [left, top]);
+
     // Update children
     this.children.forEach(function(child) {
+      // Recaculate children's translate
       child.requestRedraw();
     });
   },
@@ -147,6 +157,10 @@ Component.prototype = {
 
     this.width = width;
     this.height = height;
+
+    // Callbacks
+    this.triggerCallbacks(this.onSizeChanged, [width, height]);
+
     this.requestRedraw();
   },
 
@@ -271,16 +285,7 @@ Component.prototype = {
     }
 
     // Render customized content
-    if (typeof this.renderExtra == 'function') {
-      this.renderExtra(this, context);
-    } else if (typeof this.renderExtra == 'object') {
-      for (var i = 0; i < this.renderExtra.length; i++) {
-        var renderExtra = this.renderExtra[i];
-        if (typeof renderExtra == 'function') {
-          renderExtra(this, context);
-        }
-      }
-    }
+    this.triggerCallbacks(this.onRenderExtra, [context]);
 
     context.restore();
 
@@ -288,5 +293,19 @@ Component.prototype = {
     this.children.forEach(function(child) {
       child.render(context);
     });
+  },
+
+  // Trigger callbacks with args array
+  triggerCallbacks: function(callbacks, args) {
+    if (typeof callbacks == 'function') {
+      callbacks.apply(this, args);
+    } else if (typeof callbacks == 'object') {
+      for (var i = 0; i < callbacks.length; i++) {
+        var callback = callbacks[i];
+        if (typeof callback == 'function') {
+          callback.apply(this, args);
+        }
+      }
+    }
   }
 }

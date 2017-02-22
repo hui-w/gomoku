@@ -30,15 +30,15 @@ function Button(left, top, width, height, id) {
 Button.prototype = {
   init: function() {
     // Render the button border and background
-    this.renderExtra.push(function(self, context) {
+    this.onRenderExtra.push(function(context) {
       context.beginPath();
       context.moveTo(0, 0);
-      context.lineTo(self.width, 0);
-      context.lineTo(self.width, self.height);
-      context.lineTo(0, self.height);
+      context.lineTo(this.width, 0);
+      context.lineTo(this.width, this.height);
+      context.lineTo(0, this.height);
       context.closePath();
 
-      if (self.capturedPosition || self.isOn) {
+      if (this.capturedPosition || this.isOn) {
         context.fillStyle = "#B5B5B5";
         context.strokeStyle = "#979797";
       } else {
@@ -51,12 +51,12 @@ Button.prototype = {
     });
 
     // Render the text
-    this.renderExtra.push(function(self, context) {
+    this.onRenderExtra.push(function(context) {
       // Text
-      if (self.text) {
-        context.fillStyle = self.font.color;
-        context.font = self.font.size + "px " + self.font.face;
-        context.fillTextEx(self.text, self.width / 2, self.height / 2, 'center', 'middle');
+      if (this.text) {
+        context.fillStyle = this.font.color;
+        context.font = this.font.size + "px " + this.font.face;
+        context.fillTextEx(this.text, this.width / 2, this.height / 2, 'center', 'middle');
       }
     });
   },

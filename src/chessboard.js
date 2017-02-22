@@ -42,19 +42,19 @@ function Chessboard(left, top) {
 
 Chessboard.prototype = {
   init: function() {
-    this.renderExtra.push(this.renderChessboard);
-    this.renderExtra.push(this.renderStones);
-    this.renderExtra.push(this.renderHighlight);
-    this.renderExtra.push(this.renderResults);
+    this.onRenderExtra.push(this.renderChessboard);
+    this.onRenderExtra.push(this.renderStones);
+    this.onRenderExtra.push(this.renderHighlight);
+    this.onRenderExtra.push(this.renderResults);
   },
 
-  renderChessboard: function(self, context) {
+  renderChessboard: function(context) {
     // The rectangle of the visiable chess board
     var rect = {
-      left: self.halfSize,
-      top: self.halfSize,
-      right: self.width - self.halfSize,
-      bottom: self.height - self.halfSize
+      left: this.halfSize,
+      top: this.halfSize,
+      right: this.width - this.halfSize,
+      bottom: this.height - this.halfSize
     };
 
     context.beginPath();
@@ -62,16 +62,16 @@ Chessboard.prototype = {
       // Horizontal line
       context.antiFuzzyLine(
         rect.left,
-        rect.top + self.unitSize * i,
+        rect.top + this.unitSize * i,
         rect.right,
-        rect.top + self.unitSize * i
+        rect.top + this.unitSize * i
       );
 
       // Vertical line
       context.antiFuzzyLine(
-        rect.left + self.unitSize * i,
+        rect.left + this.unitSize * i,
         rect.top,
-        rect.left + self.unitSize * i,
+        rect.left + this.unitSize * i,
         rect.bottom
       );
     }
@@ -81,25 +81,25 @@ Chessboard.prototype = {
     context.stroke();
   },
 
-  renderStones: function(self, context) {
-    for (var i = 0; i < self.stones.length; i++) {
-      var row = self.stones[i].row;
-      var col = self.stones[i].col;
+  renderStones: function(context) {
+    for (var i = 0; i < this.stones.length; i++) {
+      var row = this.stones[i].row;
+      var col = this.stones[i].col;
 
-      var left = col * self.unitSize;
-      var top = row * self.unitSize;
+      var left = col * this.unitSize;
+      var top = row * this.unitSize;
 
-      context.drawStone(i % 2 == 0, left, top, self.halfSize);
+      context.drawStone(i % 2 == 0, left, top, this.halfSize);
     }
   },
 
-  renderHighlight: function(self, context) {
-    if (self.selectedCell) {
-      var left = self.selectedCell.col * self.unitSize;
-      var top = self.selectedCell.row * self.unitSize;
-      var right = left + self.unitSize;
-      var bottom = top + self.unitSize;
-      var length = Math.floor(self.unitSize / 4);
+  renderHighlight: function(context) {
+    if (this.selectedCell) {
+      var left = this.selectedCell.col * this.unitSize;
+      var top = this.selectedCell.row * this.unitSize;
+      var right = left + this.unitSize;
+      var bottom = top + this.unitSize;
+      var length = Math.floor(this.unitSize / 4);
 
       context.save();
       context.beginPath();
@@ -131,22 +131,22 @@ Chessboard.prototype = {
     }
   },
 
-  renderResults: function(self, context) {
-    if (self.rule.isGameOver()) {
+  renderResults: function(context) {
+    if (this.rule.isGameOver()) {
       context.beginPath();
-      for (var i = 0; i < self.rule.results.length; i++) {
-        var result = self.rule.results[i];
+      for (var i = 0; i < this.rule.results.length; i++) {
+        var result = this.rule.results[i];
 
-        var top1 = result[0] * self.unitSize + self.halfSize;
-        var left1 = result[1] * self.unitSize + self.halfSize;
-        var top2 = result[2] * self.unitSize + self.halfSize;
-        var left2 = result[3] * self.unitSize + self.halfSize;
+        var top1 = result[0] * this.unitSize + this.halfSize;
+        var left1 = result[1] * this.unitSize + this.halfSize;
+        var top2 = result[2] * this.unitSize + this.halfSize;
+        var left2 = result[3] * this.unitSize + this.halfSize;
 
         context.moveTo(left1, top1);
         context.lineTo(left2, top2);
       }
 
-      context.lineWidth = self.halfSize / 2;
+      context.lineWidth = this.halfSize / 2;
       context.strokeStyle = Config.Board.resultStyle;
       context.stroke();
     }

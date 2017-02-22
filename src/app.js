@@ -27,7 +27,7 @@ function App() {
 
   // Button: new game
   this.btnNew = new Button(0, 0, btnSize, btnSize);
-  this.btnNew.renderExtra.push(function(self, context) {
+  this.btnNew.onRenderExtra.push(function(context) {
     context.beginPath();
 
     // Horizontal line
@@ -46,7 +46,7 @@ function App() {
 
   // Button: history back
   this.btnBack = new Button(0, 0, btnSize, btnSize);
-  this.btnBack.renderExtra.push(function(self, context) {
+  this.btnBack.onRenderExtra.push(function(context) {
     context.beginPath();
 
     // Horizontal line
@@ -66,14 +66,14 @@ function App() {
 
   // Buttons for enabling the robot
   this.btnBotBlack = new Button(0, 0, btnSize, btnSize / 2);
-  this.btnBotBlack.renderExtra.push(function(self, context) {
+  this.btnBotBlack.onRenderExtra.push(function(context) {
     context.drawStone(true, btnSize / 4, 0, btnSize / 4);
   });
   this.btnBotBlack.onClick = function() {
     that.chessboard.setRobot('black', !that.chessboard.robotConfig.black);
   };
   this.btnBotWhite = new Button(0, 0, btnSize, btnSize / 2);
-  this.btnBotWhite.renderExtra.push(function(self, context) {
+  this.btnBotWhite.onRenderExtra.push(function(context) {
     context.drawStone(false, btnSize / 4, 0, btnSize / 4);
   });
   this.btnBotWhite.onClick = function() {
@@ -271,8 +271,8 @@ App.prototype = {
     this.canvas.height = this.canvas.height;
 
     // Get the component status before redraw
-    this.playerIndicator.renderExtra = function(self, context) {
-      context.drawStone(that.chessboard.isBlackPlaying(), 0, 0, Math.floor(self.width / 2));
+    this.playerIndicator.onRenderExtra = function(context) {
+      context.drawStone(that.chessboard.isBlackPlaying(), 0, 0, Math.floor(this.width / 2));
     }
     this.btnBotBlack.setOn(this.chessboard.robotConfig.black);
     this.btnBotWhite.setOn(this.chessboard.robotConfig.white);
