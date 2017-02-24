@@ -253,6 +253,11 @@ component_prototype = {
   },
 
   render: function(context) {
+    if (!this.isVisible) {
+      // The component is hidden
+      return;
+    }
+
     context.save();
 
     // Get the absolute left and top

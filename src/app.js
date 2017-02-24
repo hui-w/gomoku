@@ -15,6 +15,9 @@ function App() {
 
   // Child components
   this.home = new Home(Config.Canvas.padding, Config.Canvas.padding);
+  this.home.onHide = function() {
+    this.showHome(false);
+  }.bind(this);
   this.chessboard = new Chessboard(Config.Canvas.padding, Config.Canvas.padding);
 
   var btnSize = Config.Button.size;
@@ -292,6 +295,10 @@ App.prototype = {
   showHome: function(show) {
     this.home.setVisible(show);
     this.chessboard.setEnabled(!show);
+    this.btnBack.setEnabled(!show);
+    this.btnNew.setEnabled(!show);
+    this.btnBotWhite.setEnabled(!show);
+    this.btnBotBlack.setEnabled(!show);
   },
 
   /* Mouse events */
