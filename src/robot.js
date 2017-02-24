@@ -62,7 +62,7 @@ Robot.prototype = {
   },
 
   judge: function(x, y) {
-    var a = parseInt(this.leftRight(x, y, 1)) + parseInt(this.topBottom(x, y, 1)) + parseInt(this.rightBottom(x, y, 1)) + parseInt(this.rightTop(x, y, 1)); //判断白棋走该位置的得分  
+    var a = parseInt(this.leftRight(x, y, 1)) + parseInt(this.topBottom(x, y, 1)) + parseInt(this.rightBottom(x, y, 1)) + parseInt(this.rightTop(x, y, 1)) + 100; //判断白棋走该位置的得分  
     var b = parseInt(this.leftRight(x, y, 2)) + parseInt(this.topBottom(x, y, 2)) + parseInt(this.rightBottom(x, y, 2)) + parseInt(this.rightTop(x, y, 2)); //判断黑棋走该位置的得分  
     var result = a + b;
     // console.log("我计算出了" + x + "," + y + "这个位置的得分为" + result);  

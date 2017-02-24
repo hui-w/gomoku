@@ -23,37 +23,56 @@ var menu_prototype = {
 
     this.onRenderExtra.push(this.renderMask);
 
+    // Human vs Human
     this.btn1 = new Button(0, 0, 150, 32, 'button1');
     this.btn1.setText('Human vs. Human');
     this.btn1.onClick = function() {
-      console.log('Button1 clicked');
       this.triggerOnClose(false, false);
     }.bind(this);
     this.addChild(this.btn1);
 
+    // Human vs Robot
     this.btn2 = new Button(0, 0, 150, 32, 'button2');
     this.btn2.setText('Human vs. Robot');
     this.btn2.onClick = function() {
-      console.log('Button2 clicked');
       this.triggerOnClose(false, true);
     }.bind(this);
+    this.btn2.onRenderExtra.push(function(context) {
+    context.drawStone(false, 150 - 20 - 6, 6, 10);
+  });
     this.addChild(this.btn2);
 
+    // Robot vs Human
     this.btn3 = new Button(0, 0, 150, 32, 'button3');
     this.btn3.setText('Robot vs. Human');
     this.btn3.onClick = function() {
-      console.log('Button3 clicked');
       this.triggerOnClose(true, false);
     }.bind(this);
     this.addChild(this.btn3);
+
+    // Robot vs Robot
+    this.btn4 = new Button(0, 0, 150, 32, 'button4');
+    this.btn4.setText('Robot vs. Robot');
+    this.btn4.onClick = function() {
+      this.triggerOnClose(true, true);
+    }.bind(this);
+    this.addChild(this.btn4);
 
     this.onSizeChanged = this.sizeChangedHandler;
   },
 
   sizeChangedHandler: function(width, height) {
-    this.btn1.setPosition((width - this.btnWidth) / 2, height / 2 - 1.5 * this.btnHeight);
-    this.btn2.setPosition((width - this.btnWidth) / 2, height / 2);
-    this.btn3.setPosition((width - this.btnWidth) / 2, height / 2 + 1.5 * this.btnHeight);
+    var cLeft = width / 2 - this.btnWidth / 2;
+    var cTop = height / 2 - 2.6 * this.btnHeight;
+
+    this.btn1.setPosition(cLeft, cTop);
+    cTop += this.btnHeight * 1.4;
+    this.btn2.setPosition(cLeft, cTop);
+    cTop += this.btnHeight * 1.4;
+    this.btn3.setPosition(cLeft, cTop);
+    cTop += this.btnHeight * 1.4;
+    this.btn4.setPosition(cLeft, cTop);
+    cTop += this.btnHeight * 1.4;
   },
 
   renderMask: function(context) {

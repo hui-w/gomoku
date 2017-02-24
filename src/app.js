@@ -27,23 +27,20 @@ function App() {
   // Panel: current player indicator
   this.playerIndicator = new Panel(0, 0, btnSize, btnSize);
 
-  // Button: new game
-  this.btnNew = new Button(0, 0, btnSize, btnSize);
-  this.btnNew.onRenderExtra.push(function(context) {
+  // Button: menu button
+  this.btnMenu = new Button(0, 0, btnSize, btnSize);
+  this.btnMenu.onRenderExtra.push(function(context) {
     context.beginPath();
 
     // Horizontal line
     context.moveTo(btnSize / 4, btnSize / 2);
     context.lineTo(btnSize - btnSize / 4, btnSize / 2);
-    // Vertical line
-    context.moveTo(btnSize / 2, btnSize / 4);
-    context.lineTo(btnSize / 2, btnSize - btnSize / 4);
 
     context.strokeStyle = "#000";
     context.stroke();
   });
-  this.btnNew.onClick = function() {
-    that.chessboard.reset();
+  this.btnMenu.onClick = function() {
+    that.showMenu(true);
   };
 
   // Button: history back
@@ -66,38 +63,18 @@ function App() {
     that.chessboard.back();
   };
 
-  // Buttons for enabling the robot
-  this.btnBotBlack = new Button(0, 0, btnSize, btnSize / 2);
-  this.btnBotBlack.onRenderExtra.push(function(context) {
-    context.drawStone(true, btnSize / 4, 0, btnSize / 4);
-  });
-  this.btnBotBlack.onClick = function() {
-    that.chessboard.setRobot('black', !that.chessboard.robotConfig.black);
-  };
-  this.btnBotWhite = new Button(0, 0, btnSize, btnSize / 2);
-  this.btnBotWhite.onRenderExtra.push(function(context) {
-    context.drawStone(false, btnSize / 4, 0, btnSize / 4);
-  });
-  this.btnBotWhite.onClick = function() {
-    that.chessboard.setRobot('white', !that.chessboard.robotConfig.white);
-  };
-
   // Labels
   this.lblCurrent = new Label(0, 0, 'Player');
   this.lblCurrent.setHorizontalAlign('center');
   this.lblCurrent.setVerticalAlign('bottom');
 
-  this.lblNew = new Label(0, 0, 'New');
-  this.lblNew.setHorizontalAlign('center');
-  this.lblNew.setVerticalAlign('bottom');
+  this.lblMenu = new Label(0, 0, 'Menu');
+  this.lblMenu.setHorizontalAlign('center');
+  this.lblMenu.setVerticalAlign('bottom');
 
   this.lblBack = new Label(0, 0, 'Back');
   this.lblBack.setHorizontalAlign('center');
   this.lblBack.setVerticalAlign('bottom');
-
-  this.lblRobot = new Label(0, 0, 'Robot');
-  this.lblRobot.setHorizontalAlign('center');
-  this.lblRobot.setVerticalAlign('bottom');
 
   // UI manager
   this.uiManager = new UIManager();
@@ -107,14 +84,11 @@ function App() {
     });
   this.uiManager.registerComponent(this.chessboard);
   this.uiManager.registerComponent(this.playerIndicator);
-  this.uiManager.registerComponent(this.btnNew);
+  this.uiManager.registerComponent(this.btnMenu);
   this.uiManager.registerComponent(this.btnBack);
-  this.uiManager.registerComponent(this.btnBotBlack);
-  this.uiManager.registerComponent(this.btnBotWhite);
   this.uiManager.registerComponent(this.lblCurrent);
-  this.uiManager.registerComponent(this.lblNew);
+  this.uiManager.registerComponent(this.lblMenu);
   this.uiManager.registerComponent(this.lblBack);
-  this.uiManager.registerComponent(this.lblRobot);
   this.uiManager.registerComponent(this.menu);
 
   // Initialize
@@ -207,7 +181,7 @@ App.prototype = {
     );
 
     // Update the buttons
-    var buttonCount = 4;
+    var buttonCount = 3;
     var labelMargin = 2;
     var buttonLengthAll = Config.Button.size * buttonCount + Config.Button.margin * (buttonCount - 1);
     if (this.canvas.width > this.canvas.height) {
@@ -221,20 +195,12 @@ App.prototype = {
 
       // Buttons
       top += Config.Button.size + Config.Button.margin;
-      this.lblNew.setPosition(left + Config.Button.size / 2, top - labelMargin);
-      this.btnNew.setPosition(left, top);
+      this.lblMenu.setPosition(left + Config.Button.size / 2, top - labelMargin);
+      this.btnMenu.setPosition(left, top);
 
       top += Config.Button.size + Config.Button.margin;
       this.lblBack.setPosition(left + Config.Button.size / 2, top - labelMargin);
       this.btnBack.setPosition(left, top);
-
-      // Robots label and buttons
-      top += Config.Button.size + Config.Button.margin;
-      this.lblRobot.setPosition(left + Config.Button.size / 2, top - labelMargin);
-      this.btnBotBlack.setPosition(left, top);
-
-      top += Config.Button.size / 2;
-      this.btnBotWhite.setPosition(left, top);
     } else {
       // Buttons on the bottom side
       var left = Math.floor((this.canvas.width - buttonLengthAll) / 2);
@@ -246,20 +212,12 @@ App.prototype = {
 
       // Buttons
       left += Config.Button.size + Config.Button.margin;
-      this.lblNew.setPosition(left + Config.Button.size / 2, top - labelMargin);
-      this.btnNew.setPosition(left, top);
+      this.lblMenu.setPosition(left + Config.Button.size / 2, top - labelMargin);
+      this.btnMenu.setPosition(left, top);
 
       left += Config.Button.size + Config.Button.margin;
       this.lblBack.setPosition(left + Config.Button.size / 2, top - labelMargin);
       this.btnBack.setPosition(left, top);
-
-      // Robots label and buttons
-      left += Config.Button.size + Config.Button.margin;
-      this.lblRobot.setPosition(left + Config.Button.size / 2, top - labelMargin);
-      this.btnBotBlack.setPosition(left, top);
-
-      top += Config.Button.size / 2;
-      this.btnBotWhite.setPosition(left, top);
     }
 
     // Let UIManager to handle the redraw to avoid duplicated renderring
@@ -278,8 +236,6 @@ App.prototype = {
     this.playerIndicator.onRenderExtra = function(context) {
       context.drawStone(that.chessboard.isBlackPlaying(), 0, 0, Math.floor(this.width / 2));
     };
-    this.btnBotBlack.setOn(this.chessboard.robotConfig.black);
-    this.btnBotWhite.setOn(this.chessboard.robotConfig.white);
 
     // Draw the background
     this.context.save();
@@ -297,9 +253,6 @@ App.prototype = {
     this.menu.setVisible(show);
     this.chessboard.setEnabled(!show);
     this.btnBack.setEnabled(!show);
-    this.btnNew.setEnabled(!show);
-    this.btnBotWhite.setEnabled(!show);
-    this.btnBotBlack.setEnabled(!show);
   },
 
   /* Mouse events */

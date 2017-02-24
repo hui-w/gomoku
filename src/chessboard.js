@@ -239,6 +239,7 @@ var chessboard_prototype = {
       white: whiteBotEnabled
     };
     this.rule.reset();
+    this.robotPlay();
     this.requestRedraw();
   },
 
