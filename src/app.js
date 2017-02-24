@@ -226,7 +226,7 @@ App.prototype = {
 
       // Robots label and buttons
       top += Config.Button.size + Config.Button.margin;
-      this.lblRobot.setPosition(left + Config.Button.size / 2, top - labelMargin); 
+      this.lblRobot.setPosition(left + Config.Button.size / 2, top - labelMargin);
       this.btnBotBlack.setPosition(left, top);
 
       top += Config.Button.size / 2;
@@ -251,7 +251,7 @@ App.prototype = {
 
       // Robots label and buttons
       left += Config.Button.size + Config.Button.margin;
-      this.lblRobot.setPosition(left + Config.Button.size / 2, top - labelMargin); 
+      this.lblRobot.setPosition(left + Config.Button.size / 2, top - labelMargin);
       this.btnBotBlack.setPosition(left, top);
 
       top += Config.Button.size / 2;
@@ -273,7 +273,7 @@ App.prototype = {
     // Get the component status before redraw
     this.playerIndicator.onRenderExtra = function(context) {
       context.drawStone(that.chessboard.isBlackPlaying(), 0, 0, Math.floor(this.width / 2));
-    }
+    };
     this.btnBotBlack.setOn(this.chessboard.robotConfig.black);
     this.btnBotWhite.setOn(this.chessboard.robotConfig.white);
 

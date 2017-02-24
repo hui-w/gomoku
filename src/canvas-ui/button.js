@@ -3,32 +3,30 @@
  * @repo https://github.com/hui-w/gomoku
  * @licence MIT 
  */
-function Button(left, top, width, height, id) {
-  // Inherits all members from base class
-  Component(this, left, top, width, height, id);
+var button_prototype = {
+  isOn: null,
+  text: null,
+  font: null,
+  capturedPosition: null,
+  onClick: null,
 
-  // Initialize
-  this.type = 'button';
+  init: function(left, top, width, height, id) {
+    this._super(left, top, width, height, id);
 
-  this.isOn = false;
-  this.text = null;
-  this.font = {
-    size: 12,
-    face: "Arial, Helvetica, sans-serif",
-    color: "#000000"
-  };
+    this.isOn = false;
+    this.text = null;
+    this.font = {
+      size: 12,
+      face: "Arial, Helvetica, sans-serif",
+      color: "#000000"
+    };
 
-  // The position where mouse was down
-  this.capturedPosition = null;
+    // The position where mouse was down
+    this.capturedPosition = null;
 
-  // Event handler
-  this.onClick = [];
+    // Event handler
+    this.onClick = [];
 
-  this.init();
-}
-
-Button.prototype = {
-  init: function() {
     // Render the button border and background
     this.onRenderExtra.push(function(context) {
       context.beginPath();
@@ -115,3 +113,5 @@ Button.prototype = {
 
   }
 }
+
+var Button = Component.extend(button_prototype);

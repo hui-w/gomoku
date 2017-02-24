@@ -5,27 +5,22 @@
  *
  * Canvas label
  */
-function Label(left, top, text) {
-  // Inherits all members from base class
-  Component(this, left, top, 0, 0);
+var label_prototype = {
+  font: null,
 
-  // Initialize
-  this.type = 'label';
-  this.font = {
-    size: 12,
-    face: "Arial, Helvetica, sans-serif",
-    color: "#000000"
-  };
+  init: function(left, top, text) {
+    this._super(this, left, top, 0, 0);
 
-  this.init();
+    this.font = {
+      size: 12,
+      face: "Arial, Helvetica, sans-serif",
+      color: "#000000"
+    };
 
-  this.text = text;
-  this.horizontalAlign = 'left';
-  this.verticalAlign = 'top';
-}
+    this.text = text;
+    this.horizontalAlign = 'left';
+    this.verticalAlign = 'top';
 
-Label.prototype = {
-  init: function() {
     this.onRenderExtra.push(function(context) {
       context.fillStyle = this.font.color;
       context.font = this.font.size + "px " + this.font.face;
@@ -55,8 +50,10 @@ Label.prototype = {
     if (text === this.text) {
       return;
     }
-    
+
     this.text = text;
     this.requestRedraw();
   }
 }
+
+var Label = Component.extend(label_prototype);

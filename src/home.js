@@ -5,18 +5,10 @@
  *
  * Home Menu
  */
-function Home(left, top) {
-  // Inherits all members from base class
-  Component(this, left, top);
+var home_prototype = {
+  init: function(left, top) {
+    this._super(left, top);
 
-  // Initialize
-  this.type = 'home';
-
-  this.init();
-}
-
-Home.prototype = {
-  init: function() {
     this.onRenderExtra.push(this.renderMask);
 
     var btn1 = new Button(100, 50, 150, 32, 'button1');
@@ -42,7 +34,9 @@ Home.prototype = {
   },
 
   renderMask: function(context) {
-    context.fillStyle = "RGBA(0, 0, 0, 0.5)";
+    context.fillStyle = "RGBA(0, 0, 0, 0)";
     context.fillRect(0, 0, this.width - 0, this.height - 0);
   }
 }
+
+var Home = Component.extend(home_prototype);

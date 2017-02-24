@@ -6,42 +6,45 @@
  * The chess board of the game
  * It's derived from Component
  */
-function Chessboard(left, top) {
-  // Inherits all members from base class
-  Component(this, left, top);
+var chessboard_prototype = {
+  unitSize: null,
+  halfSize: null,
+  stones: null,
+  chessData: null,
+  robotConfig: null,
+  robot: null,
+  rule: null,
+  capturedPos: null,
+  dragOffset: null,
+  selectedCell: null,
 
-  // Initialize
-  this.type = 'chassboard';
+  init: function(left, top) {
+    this._super(left, top);
 
-  // Caculated values
-  this.unitSize = 0;
-  this.halfSize = 0;
+    // Caculated values
+    this.unitSize = 0;
+    this.halfSize = 0;
 
-  // Data {row, col}
-  this.stones = [];
+    // Data {row, col}
+    this.stones = [];
 
-  // Array for chessboard data
-  this.chessData = null;
+    // Array for chessboard data
+    this.chessData = null;
 
-  this.robotConfig = {
-    black: false,
-    white: false
-  };
-  this.robot = new Robot(this);
-  this.rule = new Rule(this);
+    this.robotConfig = {
+      black: false,
+      white: false
+    };
+    this.robot = new Robot(this);
+    this.rule = new Rule(this);
 
-  this.capturedPos = null; // {left, top}
-  this.dragOffset = null; // {left, top}
-  this.selectedCell = null; // {row, col}
+    this.capturedPos = null; // {left, top}
+    this.dragOffset = null; // {left, top}
+    this.selectedCell = null; // {row, col}
 
-  // Init the chess data array
-  this.syncToChessData();
+    // Init the chess data array
+    this.syncToChessData();
 
-  this.init();
-}
-
-Chessboard.prototype = {
-  init: function() {
     this.onRenderExtra.push(this.renderChessboard);
     this.onRenderExtra.push(this.renderStones);
     this.onRenderExtra.push(this.renderHighlight);
@@ -229,6 +232,7 @@ Chessboard.prototype = {
 
   reset: function() {
     this.stones = [];
+    this.selectedCell = null;
     this.syncToChessData();
     this.robotConfig = {
       black: false,
@@ -374,3 +378,5 @@ Chessboard.prototype = {
     return false;
   }
 }
+
+var Chessboard = Component.extend(chessboard_prototype);

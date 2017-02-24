@@ -5,50 +5,8 @@
  *
  * Base class for canvas components
  */
-function Component(child, left, top, width, height, id) {
-  /*
-  // Copy the prototype
-  for (key in Component.prototype) {
-    var item = Component.prototype[key];
-    if (typeof item === 'function') {
-      child.prototype[key] = item;
-    } else {
-      child.prototype[key] = JSON.parse(JSON.stringify(item));
-    }
-  }
-  */
-
-  // Copy the prototype
-  for (key in Component.prototype) {
-    var item = Component.prototype[key];
-    if (typeof item === 'function') {
-      child[key] = item;
-    } else {
-      child[key] = JSON.parse(JSON.stringify(item));
-    }
-  }
-
-  // Init the component
-  if (left != undefined) {
-    child.left = left;
-  }
-  if (top != undefined) {
-    child.top = top;
-  }
-  if (width != undefined) {
-    child.width = width;
-  }
-  if (height != undefined) {
-    child.height = height;
-  }
-  if (id != undefined) {
-    child.id = id;
-  }
-}
-
-Component.prototype = {
+component_prototype = {
   // Position and size
-  type: null,
   id: null,
   left: 0,
   top: 0,
@@ -88,11 +46,41 @@ Component.prototype = {
   onRequestRedraw: null,
 
   // Events handler
-  /* Comment these out, as they will be always null if being declared here as null
   onCapture: null,
   onDrag: null,
   onRelease: null,
-  */
+
+  init: function(left, top, width, height, id) {
+    // Init the component
+    if (left != undefined) {
+      this.left = left;
+    }
+    if (top != undefined) {
+      this.top = top;
+    }
+    if (width != undefined) {
+      this.width = width;
+    }
+    if (height != undefined) {
+      this.height = height;
+    }
+    if (id != undefined) {
+      this.id = id;
+    }
+
+    // Init all values
+    this.isEnabled = true;
+    this.isVisible = true;
+    this.fillStyle = null;
+    this.strokeStyle = null;
+    this.lineWidth = 0;
+    this.onRenderExtra = [];
+    this.onSizeChanged = [];
+    this.onPositionChanged = [];
+    this.parent = null;
+    this.children = [];
+    this.onRequestRedraw = null;
+  },
 
   setEnabled: function(isEnabled) {
     if (this.isEnabled === isEnabled) {
@@ -309,3 +297,5 @@ Component.prototype = {
     }
   }
 }
+
+var Component = Class.extend(component_prototype);
