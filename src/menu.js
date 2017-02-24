@@ -18,34 +18,37 @@ var menu_prototype = {
 
     // Init the value
     this.onClose = null;
-    this.btnWidth = 150;
+    this.btnWidth = 160;
     this.btnHeight = 32;
 
     this.onRenderExtra.push(this.renderMask);
 
     // Human vs Human
-    this.btn1 = new Button(0, 0, 150, 32, 'button1');
+    this.btn1 = new Button(0, 0, this.btnWidth, this.btnHeight, 'button1');
     this.btn1.setText('Human vs. Human');
+    this.btn1.setRadius(8);
     this.btn1.onClick = function() {
       this.triggerOnClose(false, false);
     }.bind(this);
     this.addChild(this.btn1);
 
     // Human vs Robot
-    this.btn2 = new Button(0, 0, 150, 32, 'button2');
+    this.btn2 = new Button(0, 0, this.btnWidth, this.btnHeight, 'button2');
     this.btn2.setText('Human vs. Robot');
+    this.btn2.setRadius(8);
     this.btn2.onClick = function() {
       this.triggerOnClose(false, true);
     }.bind(this);
     this.btn2.onRenderExtra.push(function(context) {
       // White stone on the right side
-      context.drawStone(false, 150 - 20 - 6, 6, 10);
+      context.drawStone(false, 160 - 20 - 6, 6, 10);
     });
     this.addChild(this.btn2);
 
     // Robot vs Human
-    this.btn3 = new Button(0, 0, 150, 32, 'button3');
+    this.btn3 = new Button(0, 0, this.btnWidth, this.btnHeight, 'button3');
     this.btn3.setText('Robot vs. Human');
+    this.btn3.setRadius(8);
     this.btn3.onClick = function() {
       this.triggerOnClose(true, false);
     }.bind(this);
@@ -56,8 +59,9 @@ var menu_prototype = {
     this.addChild(this.btn3);
 
     // Robot vs Robot
-    this.btn4 = new Button(0, 0, 150, 32, 'button4');
+    this.btn4 = new Button(0, 0, this.btnWidth, this.btnHeight, 'button4');
     this.btn4.setText('Robot vs. Robot');
+    this.btn4.setRadius(8);
     this.btn4.onClick = function() {
       this.triggerOnClose(true, true);
     }.bind(this);
@@ -67,7 +71,7 @@ var menu_prototype = {
     });
     this.btn4.onRenderExtra.push(function(context) {
       // White stone on the right side
-      context.drawStone(false, 150 - 20 - 6, 6, 10);
+      context.drawStone(false, 160 - 20 - 6, 6, 10);
     });
     this.addChild(this.btn4);
 

@@ -5,6 +5,7 @@
  */
 var button_prototype = {
   isOn: null,
+  radius: null,
   text: null,
   font: null,
   capturedPosition: null,
@@ -14,6 +15,7 @@ var button_prototype = {
     this._super(left, top, width, height, id);
 
     this.isOn = false;
+    this.radius = 0;
     this.text = null;
     this.font = {
       size: 12,
@@ -29,19 +31,23 @@ var button_prototype = {
 
     // Render the button border and background
     this.onRenderExtra.push(function(context) {
-      context.beginPath();
-      context.moveTo(0, 0);
-      context.lineTo(this.width, 0);
-      context.lineTo(this.width, this.height);
-      context.lineTo(0, this.height);
-      context.closePath();
-
       if (this.capturedPosition || this.isOn) {
         context.fillStyle = "#B5B5B5";
         context.strokeStyle = "#979797";
       } else {
         context.fillStyle = "#EBEBEB";
         context.strokeStyle = "#979797";
+      }
+
+      if (this.radius == 0) {
+        context.beginPath();
+        context.moveTo(0, 0);
+        context.lineTo(this.width, 0);
+        context.lineTo(this.width, this.height);
+        context.lineTo(0, this.height);
+        context.closePath();
+      } else {
+        context.roundRect(0, 0, this.width, this.height, this.radius);
       }
 
       context.fill();
@@ -65,6 +71,15 @@ var button_prototype = {
     }
 
     this.isOn = isOn;
+    this.requestRedraw();
+  },
+
+  setRadius: function(radius) {
+    if (this.radius === radius) {
+      return;
+    }
+
+    this.radius = radius;
     this.requestRedraw();
   },
 
