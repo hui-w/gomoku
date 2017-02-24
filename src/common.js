@@ -74,8 +74,10 @@ canvasPrototype.drawStone = function(isBlack, x, y, r) {
     gradient.addColorStop(0, "#0A0A0A");
     gradient.addColorStop(1, "#636766");
   } else {
-    gradient.addColorStop(0, "#D1D1D1");
-    gradient.addColorStop(1, "#F9F9F9");
+    //gradient.addColorStop(0, "#D1D1D1");
+    //gradient.addColorStop(1, "#F9F9F9");
+    gradient.addColorStop(0, "#999999");
+    gradient.addColorStop(1, "#FFFFFF");
   }
   this.fillStyle = gradient;
   this.fill();

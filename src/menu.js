@@ -38,8 +38,9 @@ var menu_prototype = {
       this.triggerOnClose(false, true);
     }.bind(this);
     this.btn2.onRenderExtra.push(function(context) {
-    context.drawStone(false, 150 - 20 - 6, 6, 10);
-  });
+      // White stone on the right side
+      context.drawStone(false, 150 - 20 - 6, 6, 10);
+    });
     this.addChild(this.btn2);
 
     // Robot vs Human
@@ -48,6 +49,10 @@ var menu_prototype = {
     this.btn3.onClick = function() {
       this.triggerOnClose(true, false);
     }.bind(this);
+    this.btn3.onRenderExtra.push(function(context) {
+      // Black stone on the left side
+      context.drawStone(true, 6, 6, 10);
+    });
     this.addChild(this.btn3);
 
     // Robot vs Robot
@@ -56,6 +61,14 @@ var menu_prototype = {
     this.btn4.onClick = function() {
       this.triggerOnClose(true, true);
     }.bind(this);
+    this.btn4.onRenderExtra.push(function(context) {
+      // Black stone on the left side
+      context.drawStone(true, 6, 6, 10);
+    });
+    this.btn4.onRenderExtra.push(function(context) {
+      // White stone on the right side
+      context.drawStone(false, 150 - 20 - 6, 6, 10);
+    });
     this.addChild(this.btn4);
 
     this.onSizeChanged = this.sizeChangedHandler;

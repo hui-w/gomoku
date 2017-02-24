@@ -33,8 +33,9 @@ function App() {
     context.beginPath();
 
     // Horizontal line
-    context.moveTo(btnSize / 4, btnSize / 2);
-    context.lineTo(btnSize - btnSize / 4, btnSize / 2);
+    context.antiFuzzyLine(btnSize / 4, parseInt(btnSize * 0.3), btnSize - btnSize / 4, parseInt(btnSize * 0.3));
+    context.antiFuzzyLine(btnSize / 4, parseInt(btnSize * 0.5), btnSize - btnSize / 4, parseInt(btnSize * 0.5));
+    context.antiFuzzyLine(btnSize / 4, parseInt(btnSize * 0.7), btnSize - btnSize / 4, parseInt(btnSize * 0.7));
 
     context.strokeStyle = "#000";
     context.stroke();
