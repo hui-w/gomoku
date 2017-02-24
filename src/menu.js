@@ -5,8 +5,8 @@
  *
  * Home Menu
  */
-var home_prototype = {
-  onHide: null,
+var menu_prototype = {
+  onClose: null,
   btnWidth: null,
   btnHeight: null,
   btn1: null,
@@ -17,7 +17,7 @@ var home_prototype = {
     this._super(left, top);
 
     // Init the value
-    this.onHide = null;
+    this.onClose = null;
     this.btnWidth = 150;
     this.btnHeight = 32;
 
@@ -27,7 +27,7 @@ var home_prototype = {
     this.btn1.setText('Human vs. Human');
     this.btn1.onClick = function() {
       console.log('Button1 clicked');
-      this.triggerOnHide();
+      this.triggerOnClose(false, false);
     }.bind(this);
     this.addChild(this.btn1);
 
@@ -35,7 +35,7 @@ var home_prototype = {
     this.btn2.setText('Human vs. Robot');
     this.btn2.onClick = function() {
       console.log('Button2 clicked');
-      this.triggerOnHide();
+      this.triggerOnClose(false, true);
     }.bind(this);
     this.addChild(this.btn2);
 
@@ -43,7 +43,7 @@ var home_prototype = {
     this.btn3.setText('Robot vs. Human');
     this.btn3.onClick = function() {
       console.log('Button3 clicked');
-      this.triggerOnHide();
+      this.triggerOnClose(true, false);
     }.bind(this);
     this.addChild(this.btn3);
 
@@ -61,11 +61,11 @@ var home_prototype = {
     context.fillRect(0, 0, this.width - 0, this.height - 0);
   },
 
-  triggerOnHide: function() {
-    if (typeof this.onHide == 'function') {
-      this.onHide();
+  triggerOnClose: function(blackBotEnabled, whiteBotEnabled) {
+    if (typeof this.onClose == 'function') {
+      this.onClose(blackBotEnabled, whiteBotEnabled);
     }
   }
 }
 
-var Home = Component.extend(home_prototype);
+var Menu = Component.extend(menu_prototype);

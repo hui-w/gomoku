@@ -230,13 +230,13 @@ var chessboard_prototype = {
     }
   },
 
-  reset: function() {
+  reset: function(blackBotEnabled, whiteBotEnabled) {
     this.stones = [];
     this.selectedCell = null;
     this.syncToChessData();
     this.robotConfig = {
-      black: false,
-      white: false
+      black: blackBotEnabled,
+      white: whiteBotEnabled
     };
     this.rule.reset();
     this.requestRedraw();

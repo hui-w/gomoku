@@ -18,7 +18,7 @@ cat \
 ../src/chessboard.js \
 ../src/common.js \
 ../src/config.js \
-../src/home.js \
+../src/menu.js \
 ../src/robot.js \
 ../src/robot_v2.js \
 ../src/rule.js \

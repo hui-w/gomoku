@@ -13,20 +13,19 @@ function App() {
   this.canvas = null;
   this.context = null;
 
-  // Child components
-  this.home = new Home(Config.Canvas.padding, Config.Canvas.padding);
-  this.home.onHide = function() {
-    this.showHome(false);
+  // Home menu and chess board
+  this.menu = new Menu(0, 0);
+  this.menu.onClose = function(blackBotEnabled, whiteBotEnabled) {
+    this.showMenu(false);
+    this.chessboard.reset(blackBotEnabled, whiteBotEnabled);
   }.bind(this);
+
   this.chessboard = new Chessboard(Config.Canvas.padding, Config.Canvas.padding);
 
   var btnSize = Config.Button.size;
 
-  // Button: current player indicator
+  // Panel: current player indicator
   this.playerIndicator = new Panel(0, 0, btnSize, btnSize);
-  //this.playerIndicator.setFillStyle("RGBA(0, 0, 0, 0.5");
-  //this.playerIndicator.setLineWidth(1);
-  //this.playerIndicator.setStrokeStyle("#000000")
 
   // Button: new game
   this.btnNew = new Button(0, 0, btnSize, btnSize);
@@ -116,7 +115,7 @@ function App() {
   this.uiManager.registerComponent(this.lblNew);
   this.uiManager.registerComponent(this.lblBack);
   this.uiManager.registerComponent(this.lblRobot);
-  this.uiManager.registerComponent(this.home);
+  this.uiManager.registerComponent(this.menu);
 
   // Initialize
   this.init();
@@ -128,7 +127,7 @@ App.prototype = {
     this.width = document.documentElement.clientWidth;
     this.height = document.documentElement.clientHeight;
     this.render();
-    this.showHome(true);
+    this.showMenu(true);
   },
 
   render: function() {
@@ -200,9 +199,11 @@ App.prototype = {
 
     // Update the chessboard
     this.chessboard.setBoardSize(boardSize);
-    this.home.setSize(
-      this.canvas.width - Config.Canvas.padding * 2,
-      this.canvas.height - Config.Canvas.padding * 2
+
+    // Update the home menu
+    this.menu.setSize(
+      this.canvas.width,
+      this.canvas.height
     );
 
     // Update the buttons
@@ -292,8 +293,8 @@ App.prototype = {
     console.log("- canvas redraw")
   },
 
-  showHome: function(show) {
-    this.home.setVisible(show);
+  showMenu: function(show) {
+    this.menu.setVisible(show);
     this.chessboard.setEnabled(!show);
     this.btnBack.setEnabled(!show);
     this.btnNew.setEnabled(!show);
