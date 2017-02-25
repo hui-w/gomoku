@@ -9,11 +9,11 @@
 var menu_prototype = {
   onClose: null,
   padding: null,
+  showClose: null,
   btn1: null,
   btn2: null,
   btn3: null,
   btn4: null,
-  btnClose: null,
 
   init: function(left, top) {
     this._super(left, top);
@@ -83,6 +83,9 @@ var menu_prototype = {
     // Close button
     this.btnClose = new Button(0, 0, 20, 20);
     this.btnClose.setRadius(2);
+    this.btnClose.onClick = function() {
+      this.triggerOnClose();
+    }.bind(this);
     this.btnClose.onRenderExtra.push(function(context) {
       context.beginPath();
       context.moveTo(4, 4);
@@ -103,7 +106,7 @@ var menu_prototype = {
     var cTop = height / 2 - 2.6 * Config.Menu.buttonHeight;
 
     this.btnClose.setPosition(
-      cLeft + Config.Menu.buttonWidth + this.padding.h - 24, 
+      cLeft + Config.Menu.buttonWidth + this.padding.h - 24,
       cTop - this.padding.v + 4
     );
 
@@ -115,6 +118,10 @@ var menu_prototype = {
     cTop += Config.Menu.buttonHeight * 1.4;
     this.btn4.setPosition(cLeft, cTop);
     cTop += Config.Menu.buttonHeight * 1.4;
+  },
+
+  showCloseButton: function(show) {
+    this.btnClose.setVisible(show);
   },
 
   renderMask: function(context) {

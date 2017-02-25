@@ -43,12 +43,25 @@ var chessboard_prototype = {
     this.selectedCell = null; // {row, col}
 
     // Init the chess data array
-    this.syncToChessData();
+    //this.syncToChessData();
 
     this.onRenderExtra.push(this.renderChessboard);
     this.onRenderExtra.push(this.renderStones);
     this.onRenderExtra.push(this.renderHighlight);
     this.onRenderExtra.push(this.renderResults);
+  },
+
+  reset: function(blackBotEnabled, whiteBotEnabled) {
+    this.stones = [];
+    this.selectedCell = null;
+    this.syncToChessData();
+    this.robotConfig = {
+      black: blackBotEnabled,
+      white: whiteBotEnabled
+    };
+    this.rule.reset();
+    this.robotPlay();
+    this.requestRedraw();
   },
 
   renderChessboard: function(context) {
@@ -228,19 +241,6 @@ var chessboard_prototype = {
       var isBlack = i % 2 === 0;
       this.chessData[row][col] = isBlack ? 1 : 2;
     }
-  },
-
-  reset: function(blackBotEnabled, whiteBotEnabled) {
-    this.stones = [];
-    this.selectedCell = null;
-    this.syncToChessData();
-    this.robotConfig = {
-      black: blackBotEnabled,
-      white: whiteBotEnabled
-    };
-    this.rule.reset();
-    this.robotPlay();
-    this.requestRedraw();
   },
 
   back: function() {

@@ -17,7 +17,10 @@ function App() {
   this.menu = new Menu(0, 0);
   this.menu.onClose = function(blackBotEnabled, whiteBotEnabled) {
     this.showMenu(false);
-    this.chessboard.reset(blackBotEnabled, whiteBotEnabled);
+    if (blackBotEnabled != null && whiteBotEnabled != null) {
+      // Arguments are null if the close button is clicked
+      this.chessboard.reset(blackBotEnabled, whiteBotEnabled);
+    }
   }.bind(this);
 
   this.chessboard = new Chessboard(Config.Canvas.padding, Config.Canvas.padding);
@@ -252,6 +255,10 @@ App.prototype = {
 
   showMenu: function(show) {
     this.menu.setVisible(show);
+
+    // Only show close button when chessdata is not ready
+    this.menu.showCloseButton(this.chessboard.chessData != null)
+
     this.chessboard.setEnabled(!show);
     this.btnBack.setEnabled(!show);
   },
