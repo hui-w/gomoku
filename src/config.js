@@ -10,6 +10,11 @@ var Config = {
     fill: "RGBA(222, 237, 247, 0.3)"
   },
 
+  Menu: {
+    buttonWidth: 160,
+    buttonHeight: 32
+  },
+
   Board: {
     size: 15,
     stroke: "RGBA(200, 200, 200, 0.8)",

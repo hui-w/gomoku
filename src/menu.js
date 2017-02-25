@@ -2,13 +2,13 @@
  * @author Wang, Hui (huiwang@qlike.com) 
  * @repo https://github.com/hui-w/gomoku
  * @licence MIT
+
  *
  * Home Menu
  */
 var menu_prototype = {
   onClose: null,
-  btnWidth: null,
-  btnHeight: null,
+  padding: null,
   btn1: null,
   btn2: null,
   btn3: null,
@@ -18,13 +18,16 @@ var menu_prototype = {
 
     // Init the value
     this.onClose = null;
-    this.btnWidth = 160;
-    this.btnHeight = 32;
+    this.padding = {
+      h: 30,
+      v: 10
+    };
 
     this.onRenderExtra.push(this.renderMask);
+    this.onRenderExtra.push(this.renderBorder);
 
     // Human vs Human
-    this.btn1 = new Button(0, 0, this.btnWidth, this.btnHeight, 'button1');
+    this.btn1 = new Button(0, 0, Config.Menu.buttonWidth, Config.Menu.buttonHeight, 'button1');
     this.btn1.setText('Human vs. Human');
     this.btn1.setRadius(8);
     this.btn1.onClick = function() {
@@ -33,7 +36,7 @@ var menu_prototype = {
     this.addChild(this.btn1);
 
     // Human vs Robot
-    this.btn2 = new Button(0, 0, this.btnWidth, this.btnHeight, 'button2');
+    this.btn2 = new Button(0, 0, Config.Menu.buttonWidth, Config.Menu.buttonHeight, 'button2');
     this.btn2.setText('Human vs. Robot');
     this.btn2.setRadius(8);
     this.btn2.onClick = function() {
@@ -46,7 +49,7 @@ var menu_prototype = {
     this.addChild(this.btn2);
 
     // Robot vs Human
-    this.btn3 = new Button(0, 0, this.btnWidth, this.btnHeight, 'button3');
+    this.btn3 = new Button(0, 0, Config.Menu.buttonWidth, Config.Menu.buttonHeight, 'button3');
     this.btn3.setText('Robot vs. Human');
     this.btn3.setRadius(8);
     this.btn3.onClick = function() {
@@ -59,7 +62,7 @@ var menu_prototype = {
     this.addChild(this.btn3);
 
     // Robot vs Robot
-    this.btn4 = new Button(0, 0, this.btnWidth, this.btnHeight, 'button4');
+    this.btn4 = new Button(0, 0, Config.Menu.buttonWidth, Config.Menu.buttonHeight, 'button4');
     this.btn4.setText('Robot vs. Robot');
     this.btn4.setRadius(8);
     this.btn4.onClick = function() {
@@ -79,22 +82,34 @@ var menu_prototype = {
   },
 
   sizeChangedHandler: function(width, height) {
-    var cLeft = width / 2 - this.btnWidth / 2;
-    var cTop = height / 2 - 2.6 * this.btnHeight;
+    var cLeft = width / 2 - Config.Menu.buttonWidth / 2;
+    var cTop = height / 2 - 2.6 * Config.Menu.buttonHeight;
 
     this.btn1.setPosition(cLeft, cTop);
-    cTop += this.btnHeight * 1.4;
+    cTop += Config.Menu.buttonHeight * 1.4;
     this.btn2.setPosition(cLeft, cTop);
-    cTop += this.btnHeight * 1.4;
+    cTop += Config.Menu.buttonHeight * 1.4;
     this.btn3.setPosition(cLeft, cTop);
-    cTop += this.btnHeight * 1.4;
+    cTop += Config.Menu.buttonHeight * 1.4;
     this.btn4.setPosition(cLeft, cTop);
-    cTop += this.btnHeight * 1.4;
+    cTop += Config.Menu.buttonHeight * 1.4;
   },
 
   renderMask: function(context) {
     context.fillStyle = "RGBA(0, 0, 0, 0.5)";
     context.fillRect(0, 0, this.width - 0, this.height - 0);
+  },
+
+  renderBorder: function(context) {
+    var height = Config.Menu.buttonHeight * 1.4 * 4 + this.padding.v * 2;
+    var left = this.width / 2 - Config.Menu.buttonWidth / 2 - this.padding.h;
+    var top = this.height / 2 - height / 2;
+    var width = Config.Menu.buttonWidth + this.padding.h * 2;
+    context.rect(left, top, width, height);
+    context.strokeStyle = "RGBA(0, 0, 0, 1)";
+    context.fillStyle = "RGBA(255, 255, 255, 0.5)";
+    context.stroke();
+    context.fill();
   },
 
   triggerOnClose: function(blackBotEnabled, whiteBotEnabled) {
