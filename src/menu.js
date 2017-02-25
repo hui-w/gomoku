@@ -12,6 +12,8 @@ var menu_prototype = {
   btn1: null,
   btn2: null,
   btn3: null,
+  btn4: null,
+  btnClose: null,
 
   init: function(left, top) {
     this._super(left, top);
@@ -19,8 +21,8 @@ var menu_prototype = {
     // Init the value
     this.onClose = null;
     this.padding = {
-      h: 30,
-      v: 10
+      h: 35,
+      v: 25
     };
 
     this.onRenderExtra.push(this.renderMask);
@@ -78,12 +80,32 @@ var menu_prototype = {
     });
     this.addChild(this.btn4);
 
+    // Close button
+    this.btnClose = new Button(0, 0, 20, 20);
+    this.btnClose.setRadius(2);
+    this.btnClose.onRenderExtra.push(function(context) {
+      context.beginPath();
+      context.moveTo(4, 4);
+      context.lineTo(16, 16);
+      context.moveTo(16, 4);
+      context.lineTo(4, 16);
+      context.strokeStyle = "RGB(255, 0, 0)";
+      context.stroke();
+    });
+    this.addChild(this.btnClose);
+
+    // When size changed, re-position the buttons
     this.onSizeChanged = this.sizeChangedHandler;
   },
 
   sizeChangedHandler: function(width, height) {
     var cLeft = width / 2 - Config.Menu.buttonWidth / 2;
     var cTop = height / 2 - 2.6 * Config.Menu.buttonHeight;
+
+    this.btnClose.setPosition(
+      cLeft + Config.Menu.buttonWidth + this.padding.h - 24, 
+      cTop - this.padding.v + 4
+    );
 
     this.btn1.setPosition(cLeft, cTop);
     cTop += Config.Menu.buttonHeight * 1.4;
@@ -101,10 +123,13 @@ var menu_prototype = {
   },
 
   renderBorder: function(context) {
-    var height = Config.Menu.buttonHeight * 1.4 * 4 + this.padding.v * 2;
+    var height = Config.Menu.buttonHeight * (4 + 0.4 * 3) + this.padding.v * 2;
     var left = this.width / 2 - Config.Menu.buttonWidth / 2 - this.padding.h;
     var top = this.height / 2 - height / 2;
     var width = Config.Menu.buttonWidth + this.padding.h * 2;
+
+    // Main dialog
+    context.beginPath();
     context.rect(left, top, width, height);
     context.strokeStyle = "RGBA(0, 0, 0, 1)";
     context.fillStyle = "RGBA(255, 255, 255, 0.5)";
