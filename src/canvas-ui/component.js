@@ -210,7 +210,7 @@ component_prototype = {
       parent = parent.parent;
     }
 
-    return { left: left, top, top };
+    return { left: left, top: top };
   },
 
   // Check if the point is inside the component rectangle
