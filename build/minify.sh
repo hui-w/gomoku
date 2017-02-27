@@ -11,10 +11,10 @@ mkdir $OUT
 
 echo "Combining JS files..."
 cat \
-$SRC/canvas-ui/button.js \
-$SRC/canvas-ui/component.js \
-$SRC/canvas-ui/label.js \
 $SRC/canvas-ui/polyfill.js \
+$SRC/canvas-ui/component.js \
+$SRC/canvas-ui/button.js \
+$SRC/canvas-ui/label.js \
 $SRC/canvas-ui/panel.js \
 $SRC/canvas-ui/ui_manager.js \
 $SRC/app.js \
