@@ -4,15 +4,6 @@
  * @licence MIT 
  */
 function App() {
-  var that = this;
-
-  // Properties
-  this.width = 0;
-  this.height = 0;
-
-  this.canvas = null;
-  this.context = null;
-
   // Home menu and chess board
   this.menu = new Menu(0, 0);
   this.menu.onClose = function(blackBotEnabled, whiteBotEnabled) {
@@ -23,6 +14,7 @@ function App() {
     }
   }.bind(this);
 
+  // The main chessboard
   this.chessboard = new Chessboard(Config.Canvas.padding, Config.Canvas.padding);
 
   var btnSize = Config.Button.size;
@@ -44,8 +36,8 @@ function App() {
     context.stroke();
   });
   this.btnMenu.onClick = function() {
-    that.showMenu(true);
-  };
+    this.showMenu(true);
+  }.bind(this);
 
   // Button: history back
   this.btnBack = new Button(0, 0, btnSize, btnSize);
@@ -64,8 +56,8 @@ function App() {
     context.stroke();
   });
   this.btnBack.onClick = function() {
-    that.chessboard.back();
-  };
+    this.chessboard.back();
+  }.bind(this);
 
   // Labels
   this.lblCurrent = new Label(0, 0, 'Player');
@@ -82,10 +74,6 @@ function App() {
 
   // UI manager
   this.uiManager = new UIManager();
-  this.uiManager.setRedrawHandler(
-    function() {
-      that.redraw();
-    });
   this.uiManager.registerComponent(this.chessboard);
   this.uiManager.registerComponent(this.playerIndicator);
   this.uiManager.registerComponent(this.btnMenu);
@@ -96,80 +84,20 @@ function App() {
   this.uiManager.registerComponent(this.menu);
 
   // Initialize
-  this.init();
+  this.uiManager.onResized = this.canvasResized.bind(this);
+  this.uiManager.onBeforeRedraw = this.beforeRedraw.bind(this);
+  this.uiManager.onAfterRedraw = this.afterRedraw.bind(this);
+  this.uiManager.render();
+  this.showMenu(true);
 }
 
 App.prototype = {
-  init: function() {
-    var that = this;
-    this.width = document.documentElement.clientWidth;
-    this.height = document.documentElement.clientHeight;
-    this.render();
-    this.showMenu(true);
-  },
-
-  render: function() {
-    var that = this;
-
-    // Create the wrapper
-    var rootElement = document.body;
-    var wrapper = rootElement.createChild("div", {
-      "id": "app-wrapper",
-      "style": "padding: " + Config.Canvas.margin + "px"
-    })
-
-    // Initialize the canvas and the context
-    this.canvas = wrapper.createChild("canvas", {
-      "id": "app-canvas",
-      "width": 0,
-      "height": 0
-    });
-    if (typeof G_vmlCanvasManager != "undefined") {
-      this.canvas = G_vmlCanvasManager.initElement(this.canvas);
-    }
-    this.context = this.canvas.getContext("2d");
-
-    // Bind events
-    // Handle the mouse events
-    this.handleMouseEvent = function(e) {
-      that.handleMouse(e, that);
-    }
-    this.canvas.addEventListener("mousedown", this.handleMouseEvent, false);
-    this.canvas.addEventListener("mousemove", this.handleMouseEvent, false);
-    this.canvas.addEventListener("mouseup", this.handleMouseEvent, false);
-
-    // Handle the touch events
-    this.handleTouchEvent = function(e) {
-      that.handleTouch(e, that);
-    }
-    this.canvas.addEventListener("touchstart", this.handleTouchEvent, false);
-    this.canvas.addEventListener("touchend", this.handleTouchEvent, false);
-    this.canvas.addEventListener("touchmove", this.handleTouchEvent, false);
-
-    // Calculate the size of the chessboard
-    this.resizeCanvas();
-
-    // Check if the window size is changed
-    function checkWindowsize() {
-      var nwidth = document.documentElement.clientWidth;
-      var nheight = document.documentElement.clientHeight;
-      if (nwidth != that.width || nheight != that.height) {
-        that.width = nwidth;
-        that.height = nheight;
-        that.resizeCanvas();
-      }
-    }
-    setInterval(checkWindowsize, 200);
-  },
-
-  resizeCanvas: function() {
-    this.canvas.width = this.width - Config.Canvas.margin * 2;
-    this.canvas.height = this.height - Config.Canvas.margin * 2;
-    var boardSize = (this.canvas.width > this.canvas.height ?
-      this.canvas.height : this.canvas.width) - Config.Canvas.padding * 2;
+  canvasResized: function(width, height) {
+    var boardSize = (width > height ?
+      height : width) - Config.Canvas.padding * 2;
 
     // Check if there is enough space for the buttons
-    var currentSpace = Math.abs(this.canvas.width - this.canvas.height);
+    var currentSpace = Math.abs(width - height);
     var spaceNeeded = Config.Button.size + Config.Button.margin * 2;
     if (currentSpace < spaceNeeded) {
       boardSize -= spaceNeeded - currentSpace;
@@ -180,18 +108,18 @@ App.prototype = {
 
     // Update the home menu
     this.menu.setSize(
-      this.canvas.width,
-      this.canvas.height
+      width,
+      height
     );
 
     // Update the buttons
     var buttonCount = 3;
     var labelMargin = 2;
     var buttonLengthAll = Config.Button.size * buttonCount + Config.Button.margin * (buttonCount - 1);
-    if (this.canvas.width > this.canvas.height) {
+    if (width > height) {
       // Buttons on the right side
       var left = Config.Canvas.padding + boardSize + Config.Button.margin;
-      var top = Math.floor((this.canvas.height - buttonLengthAll) / 2);
+      var top = Math.floor((height - buttonLengthAll) / 2);
 
       // Player indicator
       this.lblCurrent.setPosition(left + Config.Button.size / 2, top - labelMargin);
@@ -207,7 +135,7 @@ App.prototype = {
       this.btnBack.setPosition(left, top);
     } else {
       // Buttons on the bottom side
-      var left = Math.floor((this.canvas.width - buttonLengthAll) / 2);
+      var left = Math.floor((width - buttonLengthAll) / 2);
       var top = Config.Canvas.padding + boardSize + Config.Button.margin;
 
       // Player indicator
@@ -229,27 +157,21 @@ App.prototype = {
     this.uiManager.requestRedraw();
   },
 
-  redraw: function() {
-    var that = this;
-
-    // Clear the canvas
-    this.canvas.width = this.canvas.width;
-    this.canvas.height = this.canvas.height;
-
+  beforeRedraw: function(context) {
     // Get the component status before redraw
     this.playerIndicator.onRenderExtra = function(context) {
-      context.drawStone(that.chessboard.isBlackPlaying(), 0, 0, Math.floor(this.width / 2));
-    };
+      var r = Math.floor(this.playerIndicator.width / 2);
+      context.drawStone(this.chessboard.isBlackPlaying(), 0, 0, r);
+    }.bind(this);
 
     // Draw the background
-    this.context.save();
-    this.context.fillStyle = Config.Canvas.fill;
-    this.context.fillRect(0, 0, this.canvas.width, this.canvas.height);
-    this.context.restore();
+    context.save();
+    context.fillStyle = Config.Canvas.fill;
+    context.fillRect(0, 0, this.uiManager.width, this.uiManager.height);
+    context.restore();
+  },
 
-    // Redraw all managed components
-    this.uiManager.redrawComponents(this.context);
-
+  afterRedraw: function(context) {
     console.log("- canvas redraw")
   },
 
@@ -261,66 +183,6 @@ App.prototype = {
 
     this.chessboard.setEnabled(!show);
     this.btnBack.setEnabled(!show);
-  },
-
-  /* Mouse events */
-  handleMouse: function(e, that) {
-    switch (e.type) {
-      case "mousedown":
-        that.capture(e);
-        break;
-      case "mousemove":
-        that.drag(e);
-        break;
-      case "mouseup":
-        that.release(e);
-        break;
-    }
-  },
-
-  /* Touch events */
-  handleTouch: function(e, that) {
-    e.preventDefault();
-    switch (e.type) {
-      case "touchstart":
-        if (e.touches.length == 1) {
-          that.capture(e.targetTouches[0]);
-        } else if (e.touches.length == 2) {}
-        break;
-      case "touchend":
-        if (e.changedTouches.length == 1) {
-          that.release(e.changedTouches[0]);
-        }
-        break;
-      case "touchmove":
-        if (e.changedTouches.length == 1) {
-          that.drag(e.changedTouches[0]);
-        } else if (e.touches.length == 2) {}
-        break;
-    }
-  },
-
-  capture: function(e) {
-    var pos = this.getEventPosition(e);
-    this.uiManager.dispatchEvent('capture', pos.left, pos.top);
-  },
-
-  drag: function(e) {
-    var pos = this.getEventPosition(e);
-    this.uiManager.dispatchEvent('drag', pos.left, pos.top);
-  },
-
-  release: function(e) {
-    var pos = this.getEventPosition(e);
-    this.uiManager.dispatchEvent('release', pos.left, pos.top);
-  },
-
-  /* Get the event position on the monitor */
-  getEventPosition: function(ev) {
-    return {
-      left: ev.pageX - this.canvas.offsetLeft,
-      top: ev.pageY - this.canvas.offsetTop
-    };
   }
 }
 

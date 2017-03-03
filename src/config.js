@@ -5,7 +5,6 @@
 */
 var Config = {
   Canvas: {
-    margin: 0,
     padding: 10,
     fill: "RGBA(222, 237, 247, 0.3)"
   },

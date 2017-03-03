@@ -283,8 +283,6 @@ var chessboard_prototype = {
   },
 
   putStone: function(row, col) {
-    var that = this;
-
     if (this.rule.isGameOver()) {
       // The Game is already over
       return;
@@ -308,8 +306,8 @@ var chessboard_prototype = {
     if (!this.rule.isGameOver()) {
       // Let robot play
       setTimeout(function() {
-        that.robotPlay();
-      }, 100);
+        this.robotPlay();
+      }.bind(this), 100);
     }
   },
 
