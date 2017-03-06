@@ -5,10 +5,9 @@
  *
  * Canvas panel
  */
-
 var panel_prototype = {
-  init: function(left, top, width, height) {
-    this._super(left, top, width, height);
+  init: function(left, top, width, height, id) {
+    this._super(left, top, width, height, id);
   }
 }
 

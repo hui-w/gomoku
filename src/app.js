@@ -151,14 +151,10 @@ App.prototype = {
       this.lblBack.setPosition(left + Config.Button.size / 2, top - labelMargin);
       this.btnBack.setPosition(left, top);
     }
-
-    // Let UIManager to handle the redraw to avoid duplicated renderring
-    // this.redraw();
-    this.uiManager.requestRedraw();
   },
 
   beforeRedraw: function(context) {
-    // Get the component status before redraw
+    // Set the player indicator
     this.playerIndicator.onRenderExtra = function(context) {
       var r = Math.floor(this.playerIndicator.width / 2);
       context.drawStone(this.chessboard.isBlackPlaying(), 0, 0, r);

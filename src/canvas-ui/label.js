@@ -8,8 +8,8 @@
 var label_prototype = {
   font: null,
 
-  init: function(left, top, text) {
-    this._super(this, left, top, 0, 0);
+  init: function(left, top, text, id) {
+    this._super(this, left, top, 0, 0, id);
 
     this.font = {
       size: 12,
