@@ -85,8 +85,8 @@ function App() {
 
   // Initialize
   this.uiManager.onResized = this.canvasResized.bind(this);
-  this.uiManager.onBeforeRedraw = this.beforeRedraw.bind(this);
-  this.uiManager.onAfterRedraw = this.afterRedraw.bind(this);
+  this.uiManager.onWillPaint = this.canvasWillPaint.bind(this);
+  this.uiManager.onDidPaint = this.canvasDidPaint.bind(this);
   this.uiManager.render();
   this.showMenu(true);
 }
@@ -153,7 +153,7 @@ App.prototype = {
     }
   },
 
-  beforeRedraw: function(context) {
+  canvasWillPaint: function(context) {
     // Set the player indicator
     this.playerIndicator.onRenderExtra = function(context) {
       var r = Math.floor(this.playerIndicator.width / 2);
@@ -167,8 +167,8 @@ App.prototype = {
     context.restore();
   },
 
-  afterRedraw: function(context) {
-    console.log("- canvas redraw")
+  canvasDidPaint: function(context) {
+    console.log("- canvas painted")
   },
 
   showMenu: function(show) {

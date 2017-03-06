@@ -71,7 +71,7 @@ var button_prototype = {
     }
 
     this.isOn = isOn;
-    this.requestRedraw();
+    this.requestPaint();
   },
 
   setRadius: function(radius) {
@@ -80,7 +80,7 @@ var button_prototype = {
     }
 
     this.radius = radius;
-    this.requestRedraw();
+    this.requestPaint();
   },
 
   setText: function(text) {
@@ -89,7 +89,7 @@ var button_prototype = {
     }
 
     this.text = text;
-    this.requestRedraw();
+    this.requestPaint();
   },
 
   onCapture: function(left, top) {
@@ -98,7 +98,7 @@ var button_prototype = {
     }
 
     this.capturedPosition = { left: left, top: top };
-    this.requestRedraw();
+    this.requestPaint();
   },
 
   onRelease: function(left, top) {
@@ -121,7 +121,7 @@ var button_prototype = {
     }
 
     this.capturedPosition = null;
-    this.requestRedraw();
+    this.requestPaint();
   },
 
   onDrag: function(left, top) {

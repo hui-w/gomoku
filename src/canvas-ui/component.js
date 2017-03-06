@@ -43,7 +43,7 @@ component_prototype = {
   children: [],
 
   // Event to update UI
-  onRequestRedraw: null,
+  onrequestPaint: null,
 
   // Events handler
   onCapture: null,
@@ -79,7 +79,7 @@ component_prototype = {
     this.onPositionChanged = [];
     this.parent = null;
     this.children = [];
-    this.onRequestRedraw = null;
+    this.onrequestPaint = null;
   },
 
   setEnabled: function(isEnabled) {
@@ -88,7 +88,7 @@ component_prototype = {
     }
 
     this.isEnabled = isEnabled;
-    this.requestRedraw();
+    this.requestPaint();
 
     // Update children
     this.children.forEach(function(child) {
@@ -102,7 +102,7 @@ component_prototype = {
     }
 
     this.isVisible = isVisible;
-    this.requestRedraw();
+    this.requestPaint();
 
     // Update children
     this.children.forEach(function(child) {
@@ -117,7 +117,7 @@ component_prototype = {
 
     this.left = left;
     this.top = top;
-    this.requestRedraw();
+    this.requestPaint();
 
     // Callbacks
     this.triggerCallbacks(this.onPositionChanged, [left, top]);
@@ -125,16 +125,16 @@ component_prototype = {
     // Update children
     this.children.forEach(function(child) {
       // Recaculate children's translate
-      child.requestRedraw();
+      child.requestPaint();
     });
   },
 
-  setRedrawHandler: function(handler) {
-    this.onRequestRedraw = handler;
+  setPaintHandler: function(handler) {
+    this.onrequestPaint = handler;
 
     // Update children
     this.children.forEach(function(child) {
-      child.setRedrawHandler(handler);
+      child.setPaintHandler(handler);
     });
   },
 
@@ -149,7 +149,7 @@ component_prototype = {
     // Callbacks
     this.triggerCallbacks(this.onSizeChanged, [width, height]);
 
-    this.requestRedraw();
+    this.requestPaint();
   },
 
   setStrokeStyle: function(strokeStyle) {
@@ -158,7 +158,7 @@ component_prototype = {
     }
 
     this.strokeStyle = strokeStyle;
-    this.requestRedraw();
+    this.requestPaint();
   },
 
   setLineWidth: function(lineWidth) {
@@ -167,7 +167,7 @@ component_prototype = {
     }
 
     this.lineWidth = lineWidth;
-    this.requestRedraw();
+    this.requestPaint();
   },
 
   setFillStyle: function(fillStyle) {
@@ -176,7 +176,7 @@ component_prototype = {
     }
 
     this.fillStyle = fillStyle;
-    this.requestRedraw();
+    this.requestPaint();
   },
 
   // Add a child component
@@ -191,9 +191,9 @@ component_prototype = {
   },
 
   // Request redraw
-  requestRedraw: function() {
-    if (typeof this.onRequestRedraw == 'function') {
-      this.onRequestRedraw();
+  requestPaint: function() {
+    if (typeof this.onrequestPaint == 'function') {
+      this.onrequestPaint();
     }
   },
 

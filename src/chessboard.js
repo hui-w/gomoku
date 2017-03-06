@@ -61,7 +61,7 @@ var chessboard_prototype = {
     };
     this.rule.reset();
     this.robotPlay();
-    this.requestRedraw();
+    this.requestPaint();
   },
 
   renderChessboard: function(context) {
@@ -275,7 +275,7 @@ var chessboard_prototype = {
 
     // Update the judge
     this.rule.reset();
-    this.requestRedraw();
+    this.requestPaint();
   },
 
   isBlackPlaying: function() {
@@ -301,7 +301,7 @@ var chessboard_prototype = {
     // Check if game is over
     this.rule.syncStatus(row, col);
 
-    this.requestRedraw();
+    this.requestPaint();
 
     if (!this.rule.isGameOver()) {
       // Let robot play
@@ -356,7 +356,7 @@ var chessboard_prototype = {
     var newCol = this.selectedCell ? this.selectedCell.col : null;
 
     if (newRow != oldRow || newCol != oldCol) {
-      this.requestRedraw();
+      this.requestPaint();
     }
   },
 

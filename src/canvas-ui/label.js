@@ -34,7 +34,7 @@ var label_prototype = {
     }
 
     this.horizontalAlign = horizontalAlign;
-    this.requestRedraw();
+    this.requestPaint();
   },
 
   setVerticalAlign: function(verticalAlign) {
@@ -43,7 +43,7 @@ var label_prototype = {
     }
 
     this.verticalAlign = verticalAlign;
-    this.requestRedraw();
+    this.requestPaint();
   },
 
   setText: function(text) {
@@ -52,7 +52,7 @@ var label_prototype = {
     }
 
     this.text = text;
-    this.requestRedraw();
+    this.requestPaint();
   }
 }
 

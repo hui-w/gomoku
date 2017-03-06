@@ -15,20 +15,20 @@ function UIManager() {
 
   // Callbacks for events
   this.onResized = null;
-  this.onBeforeRedraw = null;
-  this.onAfterRedraw = null;
+  this.onWillPaint = null;
+  this.onDidPaint = null;
 }
 
 UIManager.prototype = {
   registerComponent: function(component) {
-    component.setRedrawHandler(function() {
-      this.requestRedraw();
+    component.setPaintHandler(function() {
+      this.requestPaint();
     }.bind(this));
 
     this.components.push(component);
   },
 
-  requestRedraw: function() {
+  requestPaint: function() {
     if (this.delayTimer) {
       // To aviod duplicated render
       return;
@@ -112,7 +112,7 @@ UIManager.prototype = {
       this.onResized(this.width, this.height);
     }
 
-    this.requestRedraw();
+    this.requestPaint();
   },
 
   // Get the event position on the canvas
@@ -181,16 +181,16 @@ UIManager.prototype = {
     this.canvas.height = this.canvas.height;
 
     // Before redrawing components
-    if (typeof this.onBeforeRedraw === 'function') {
-      this.onBeforeRedraw(this.context);
+    if (typeof this.onWillPaint === 'function') {
+      this.onWillPaint(this.context);
     }
 
     // Redraw all managed components
     this.redrawComponents(this.context);
 
     // After redrawing components
-    if (typeof this.onAfterRedraw === 'function') {
-      this.onAfterRedraw(this.context);
+    if (typeof this.onDidPaint === 'function') {
+      this.onDidPaint(this.context);
     }
   }
 }
