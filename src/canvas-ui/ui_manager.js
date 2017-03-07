@@ -20,6 +20,9 @@ function UIManager() {
 }
 
 UIManager.prototype = {
+  /*
+   * Register a component to the managed list
+   */
   registerComponent: function(component) {
     component.setPaintHandler(function() {
       this.requestPaint();
@@ -28,6 +31,18 @@ UIManager.prototype = {
     this.components.push(component);
   },
 
+  /*
+   * Register a set of components to the managed list
+   */
+  registerComponents: function(components) {
+    components.forEach(function(component) {
+      this.registerComponent(component);
+    }.bind(this));
+  },
+
+  /*
+   * Add the paint request into the queue
+   */
   requestPaint: function() {
     if (this.delayTimer) {
       // To aviod duplicated render

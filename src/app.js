@@ -74,14 +74,16 @@ function App() {
 
   // UI manager
   this.uiManager = new UIManager();
-  this.uiManager.registerComponent(this.chessboard);
-  this.uiManager.registerComponent(this.playerIndicator);
-  this.uiManager.registerComponent(this.btnMenu);
-  this.uiManager.registerComponent(this.btnBack);
-  this.uiManager.registerComponent(this.lblCurrent);
-  this.uiManager.registerComponent(this.lblMenu);
-  this.uiManager.registerComponent(this.lblBack);
-  this.uiManager.registerComponent(this.menu);
+  this.uiManager.registerComponents([
+    this.chessboard,
+    this.playerIndicator,
+    this.btnMenu,
+    this.btnBack,
+    this.lblCurrent,
+    this.lblMenu,
+    this.lblBack,
+    this.menu
+  ]);
 
   // Initialize
   this.uiManager.onResized = this.canvasResized.bind(this);
