@@ -3,97 +3,22 @@
  * @repo https://github.com/hui-w/gomoku
  * @licence MIT 
  */
-function App() {
-  // Home menu and chess board
-  this.menu = new Menu(0, 0);
-  this.menu.onClose = function(blackBotEnabled, whiteBotEnabled) {
-    this.showMenu(false);
-    if (blackBotEnabled != null && whiteBotEnabled != null) {
-      // Arguments are null if the close button is clicked
-      this.chessboard.reset(blackBotEnabled, whiteBotEnabled);
-    }
-  }.bind(this);
 
-  // The main chessboard
-  this.chessboard = new Chessboard(Config.Canvas.padding, Config.Canvas.padding);
+var app_prototype = {
+  menu: null,
+  chessboard: null,
+  playerIndicator: null,
+  btnMenu: null,
+  btnBack: null,
+  lblCurrent: null,
+  lblMenu: null,
+  lblBack: null,
 
-  var btnSize = Config.Button.size;
+  init: function() {
+    this._super();
+    this.initChildren();
+  },
 
-  // Panel: current player indicator
-  this.playerIndicator = new Panel(0, 0, btnSize, btnSize);
-
-  // Button: menu button
-  this.btnMenu = new Button(0, 0, btnSize, btnSize);
-  this.btnMenu.onRenderExtra.push(function(context) {
-    context.beginPath();
-
-    // Horizontal line
-    context.antiFuzzyLine(btnSize / 4, parseInt(btnSize * 0.3), btnSize - btnSize / 4, parseInt(btnSize * 0.3));
-    context.antiFuzzyLine(btnSize / 4, parseInt(btnSize * 0.5), btnSize - btnSize / 4, parseInt(btnSize * 0.5));
-    context.antiFuzzyLine(btnSize / 4, parseInt(btnSize * 0.7), btnSize - btnSize / 4, parseInt(btnSize * 0.7));
-
-    context.strokeStyle = "#000";
-    context.stroke();
-  });
-  this.btnMenu.onClick = function() {
-    this.showMenu(true);
-  }.bind(this);
-
-  // Button: history back
-  this.btnBack = new Button(0, 0, btnSize, btnSize);
-  this.btnBack.onRenderExtra.push(function(context) {
-    context.beginPath();
-
-    // Horizontal line
-    context.moveTo(btnSize / 4, btnSize / 2);
-    context.lineTo(btnSize - btnSize / 4, btnSize / 2);
-    // Arrow
-    context.moveTo(btnSize / 2, btnSize / 4);
-    context.lineTo(btnSize / 4, btnSize / 2);
-    context.lineTo(btnSize / 2, btnSize - btnSize / 4);
-
-    context.strokeStyle = "#000";
-    context.stroke();
-  });
-  this.btnBack.onClick = function() {
-    this.chessboard.back();
-  }.bind(this);
-
-  // Labels
-  this.lblCurrent = new Label(0, 0, 'Player');
-  this.lblCurrent.setHorizontalAlign('center');
-  this.lblCurrent.setVerticalAlign('bottom');
-
-  this.lblMenu = new Label(0, 0, 'Menu');
-  this.lblMenu.setHorizontalAlign('center');
-  this.lblMenu.setVerticalAlign('bottom');
-
-  this.lblBack = new Label(0, 0, 'Back');
-  this.lblBack.setHorizontalAlign('center');
-  this.lblBack.setVerticalAlign('bottom');
-
-  // UI manager
-  this.uiManager = new UIManager();
-  this.uiManager.registerComponents([
-    this.chessboard,
-    this.playerIndicator,
-    this.btnMenu,
-    this.btnBack,
-    this.lblCurrent,
-    this.lblMenu,
-    this.lblBack,
-    this.menu
-  ]);
-
-  // Initialize
-  this.uiManager.onResized = this.canvasResized.bind(this);
-  this.uiManager.onWillPaint = this.canvasWillPaint.bind(this);
-  this.uiManager.onDidPaint = this.canvasDidPaint.bind(this);
-  this.uiManager.render();
-  this.showMenu(true);
-}
-
-App.prototype = {
   canvasResized: function(width, height) {
     var boardSize = (width > height ?
       height : width) - Config.Canvas.padding * 2;
@@ -165,12 +90,98 @@ App.prototype = {
     // Draw the background
     context.save();
     context.fillStyle = Config.Canvas.fill;
-    context.fillRect(0, 0, this.uiManager.width, this.uiManager.height);
+    context.fillRect(0, 0, this.width, this.height);
     context.restore();
   },
 
   canvasDidPaint: function(context) {
-    console.log("- canvas painted")
+    console.log("- canvas painted");
+  },
+
+  initChildren: function() {
+    // Home menu and chess board
+    this.menu = new Menu(0, 0);
+    this.menu.onClose = function(blackBotEnabled, whiteBotEnabled) {
+      this.showMenu(false);
+      if (blackBotEnabled != null && whiteBotEnabled != null) {
+        // Arguments are null if the close button is clicked
+        this.chessboard.reset(blackBotEnabled, whiteBotEnabled);
+      }
+    }.bind(this);
+
+    // The main chessboard
+    this.chessboard = new Chessboard(Config.Canvas.padding, Config.Canvas.padding);
+
+    var btnSize = Config.Button.size;
+
+    // Panel: current player indicator
+    this.playerIndicator = new Panel(0, 0, btnSize, btnSize);
+
+    // Button: menu button
+    this.btnMenu = new Button(0, 0, btnSize, btnSize);
+    this.btnMenu.onRenderExtra.push(function(context) {
+      context.beginPath();
+
+      // Horizontal line
+      context.antiFuzzyLine(btnSize / 4, parseInt(btnSize * 0.3), btnSize - btnSize / 4, parseInt(btnSize * 0.3));
+      context.antiFuzzyLine(btnSize / 4, parseInt(btnSize * 0.5), btnSize - btnSize / 4, parseInt(btnSize * 0.5));
+      context.antiFuzzyLine(btnSize / 4, parseInt(btnSize * 0.7), btnSize - btnSize / 4, parseInt(btnSize * 0.7));
+
+      context.strokeStyle = "#000";
+      context.stroke();
+    });
+    this.btnMenu.onClick = function() {
+      this.showMenu(true);
+    }.bind(this);
+
+    // Button: history back
+    this.btnBack = new Button(0, 0, btnSize, btnSize);
+    this.btnBack.onRenderExtra.push(function(context) {
+      context.beginPath();
+
+      // Horizontal line
+      context.moveTo(btnSize / 4, btnSize / 2);
+      context.lineTo(btnSize - btnSize / 4, btnSize / 2);
+      // Arrow
+      context.moveTo(btnSize / 2, btnSize / 4);
+      context.lineTo(btnSize / 4, btnSize / 2);
+      context.lineTo(btnSize / 2, btnSize - btnSize / 4);
+
+      context.strokeStyle = "#000";
+      context.stroke();
+    });
+    this.btnBack.onClick = function() {
+      this.chessboard.back();
+    }.bind(this);
+
+    // Labels
+    this.lblCurrent = new Label(0, 0, 'Player');
+    this.lblCurrent.setHorizontalAlign('center');
+    this.lblCurrent.setVerticalAlign('bottom');
+
+    this.lblMenu = new Label(0, 0, 'Menu');
+    this.lblMenu.setHorizontalAlign('center');
+    this.lblMenu.setVerticalAlign('bottom');
+
+    this.lblBack = new Label(0, 0, 'Back');
+    this.lblBack.setHorizontalAlign('center');
+    this.lblBack.setVerticalAlign('bottom');
+
+    // UI manager
+    this.registerComponents([
+      this.chessboard,
+      this.playerIndicator,
+      this.btnMenu,
+      this.btnBack,
+      this.lblCurrent,
+      this.lblMenu,
+      this.lblBack,
+      this.menu
+    ]);
+
+    // Initialize
+    this.render();
+    this.showMenu(true);
   },
 
   showMenu: function(show) {
@@ -183,6 +194,8 @@ App.prototype = {
     this.btnBack.setEnabled(!show);
   }
 }
+
+var App = CanvasApp.extend(app_prototype);
 
 var app = null;
 addEventListener("load", function() {

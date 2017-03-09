@@ -9,6 +9,6 @@ var panel_prototype = {
   init: function(left, top, width, height, id) {
     this._super(left, top, width, height, id);
   }
-}
+};
 
 var Panel = Component.extend(panel_prototype);

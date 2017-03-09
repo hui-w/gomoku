@@ -5,7 +5,7 @@
  *
  * Base class for canvas components
  */
-component_prototype = {
+var component_prototype = {
   // Position and size
   id: null,
   left: 0,
@@ -301,6 +301,6 @@ component_prototype = {
       }
     }
   }
-}
+};
 
 var Component = Class.extend(component_prototype);

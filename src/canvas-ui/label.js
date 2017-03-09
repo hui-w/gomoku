@@ -54,6 +54,6 @@ var label_prototype = {
     this.text = text;
     this.requestPaint();
   }
-}
+};
 
 var Label = Component.extend(label_prototype);

@@ -16,7 +16,7 @@ $SRC/canvas-ui/component.js \
 $SRC/canvas-ui/button.js \
 $SRC/canvas-ui/label.js \
 $SRC/canvas-ui/panel.js \
-$SRC/canvas-ui/ui_manager.js \
+$SRC/canvas-ui/canvas_app.js \
 $SRC/app.js \
 $SRC/chessboard.js \
 $SRC/common.js \

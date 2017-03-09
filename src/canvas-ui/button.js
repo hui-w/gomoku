@@ -127,6 +127,6 @@ var button_prototype = {
   onDrag: function(left, top) {
 
   }
-}
+};
 
 var Button = Component.extend(button_prototype);

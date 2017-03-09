@@ -3,23 +3,38 @@
  * @repo https://github.com/hui-w/gomoku
  * @licence MIT 
  */
-function UIManager() {
-  this.components = [];
-  this.delayTimer = null;
 
-  this.width = 0;
-  this.height = 0;
+var canvas_app_prototype = {
+  components: null,
+  delayTimer: null,
 
-  this.canvas = null;
-  this.context = null;
+  width: null,
+  height: null,
+
+  canvas: null,
+  context: null,
 
   // Callbacks for events
-  this.onResized = null;
-  this.onWillPaint = null;
-  this.onDidPaint = null;
-}
+  onResized: null,
+  onWillPaint: null,
+  onDidPaint: null,
 
-UIManager.prototype = {
+  init: function() {
+    this.components = [];
+    this.delayTimer = null;
+
+    this.width = 0;
+    this.height = 0;
+
+    this.canvas = null;
+    this.context = null;
+
+    // Callbacks for events
+    this.onResized = this.canvasResized;
+    this.onWillPaint = this.canvasWillPaint;
+    this.onDidPaint = this.canvasDidPaint;
+  },
+
   /*
    * Register a component to the managed list
    */
@@ -208,4 +223,6 @@ UIManager.prototype = {
       this.onDidPaint(this.context);
     }
   }
-}
+};
+
+var CanvasApp = Class.extend(canvas_app_prototype);
