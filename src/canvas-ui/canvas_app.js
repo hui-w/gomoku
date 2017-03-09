@@ -2,8 +2,9 @@
  * @author Wang, Hui (huiwang@qlike.com) 
  * @repo https://github.com/hui-w/gomoku
  * @licence MIT 
+ *
+ * Base class for canvas app
  */
-
 var canvas_app_prototype = {
   components: null,
   delayTimer: null,

@@ -5,6 +5,7 @@
  */
 
 var app_prototype = {
+  // Child components
   menu: null,
   chessboard: null,
   playerIndicator: null,
@@ -16,7 +17,25 @@ var app_prototype = {
 
   init: function() {
     this._super();
+
+    // Prepare the child components
     this.initChildren();
+
+    // Register the children
+    this.registerComponents([
+      this.chessboard,
+      this.playerIndicator,
+      this.btnMenu,
+      this.btnBack,
+      this.lblCurrent,
+      this.lblMenu,
+      this.lblBack,
+      this.menu
+    ]);
+
+    // Initialize
+    this.render();
+    this.showMenu(true);
   },
 
   canvasResized: function(width, height) {
@@ -166,22 +185,6 @@ var app_prototype = {
     this.lblBack = new Label(0, 0, 'Back');
     this.lblBack.setHorizontalAlign('center');
     this.lblBack.setVerticalAlign('bottom');
-
-    // UI manager
-    this.registerComponents([
-      this.chessboard,
-      this.playerIndicator,
-      this.btnMenu,
-      this.btnBack,
-      this.lblCurrent,
-      this.lblMenu,
-      this.lblBack,
-      this.menu
-    ]);
-
-    // Initialize
-    this.render();
-    this.showMenu(true);
   },
 
   showMenu: function(show) {
