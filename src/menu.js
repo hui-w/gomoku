@@ -138,7 +138,7 @@ var menu_prototype = {
     context.beginPath();
     context.rect(left, top, width, height);
     context.strokeStyle = "RGBA(0, 0, 0, 1)";
-    context.fillStyle = "RGBA(255, 255, 255, 0.5)";
+    context.fillStyle = "RGBA(255, 255, 255, 0.8)";
     context.stroke();
     context.fill();
   },
