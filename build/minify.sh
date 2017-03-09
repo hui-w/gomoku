@@ -1,9 +1,9 @@
 #!/bin/sh
 
 YUI="./yuicompressor-2.4.8.jar"
-SRC="..\src"
-RES="..\res"
-OUT="..\output"
+SRC="../src"
+RES="../res"
+OUT="../output"
 
 echo "Deleting old content of output..."
 rm -rf $OUT
