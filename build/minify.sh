@@ -11,12 +11,6 @@ mkdir $OUT
 
 echo "Combining JS files..."
 cat \
-$SRC/canvas-ui/polyfill.js \
-$SRC/canvas-ui/component.js \
-$SRC/canvas-ui/button.js \
-$SRC/canvas-ui/label.js \
-$SRC/canvas-ui/panel.js \
-$SRC/canvas-ui/canvas_app.js \
 $SRC/app.js \
 $SRC/chessboard.js \
 $SRC/common.js \
@@ -35,7 +29,7 @@ $OUT/temp.app.js
 
 echo "Combining CSS files..."
 cat \
-$SRC/web.css \
+$SRC/style.css \
 > $OUT/temp.app.css
 
 echo "Compressing CSS files..."
@@ -64,6 +58,8 @@ if [ ! -f  $RES/apple-touch-icon.png ]; then
 else
   cp $RES/apple-touch-icon.png $OUT/apple-touch-icon.png
 fi
+
+cp $SRC/canvas-ui/canvas-ui-0.0.1.min.js $OUT/canvas-ui-0.0.1.min.js
 
 echo "Done!"
 # find . -iname "*.js" -exec cat "{}" \; > singlefile.js
