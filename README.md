@@ -10,6 +10,6 @@ A Javascript and Canvas implementation of Gomoku game (aka Gobang or Five in a R
 3) Robot vs. Robot (Just for fun, as they always run neck to neck)
 
 ## Demo
-https://hui-w.github.io/gomoku
+https://www.qlike.com/app/gomoku/
 
 ![image](https://raw.githubusercontent.com/hui-w/gomoku/master/screenshots/2017-02-15.jpg)
